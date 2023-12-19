@@ -151,8 +151,8 @@ class ChoiceWorldSession(
             self.start_mixin_valve()
             self.start_mixin_sound()
             self.start_mixin_rotary_encoder()
-            self.start_mixin_bonsai_cameras()
-            self.start_mixin_bonsai_microphone()
+            # self.start_mixin_bonsai_cameras()
+            # self.start_mixin_bonsai_microphone()
             self.start_mixin_bonsai_visual_stimulus()
 
     def _run(self):

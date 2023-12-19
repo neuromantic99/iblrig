@@ -1,0 +1,45 @@
+#  In this setting file, you will find a list of each device (i.e. hardware apparatus) you can control.
+# Each device is named in the list below by the "device_" word beforehand, e.g. "device_frame2ttl".
+# Each device has settings parameters, written below the device name, e.g. its COM port or code workflow to run it.
+# To set these parameters, go to TODO DOCUMENTATION APPENDIX 3
+
+# The RIG_NAME should be a unique lab location name. If using Alyx, be sure to create this lab location
+# via the admin interface (admin/misc/lablocation/)
+RIG_NAME: __example_rig
+# If your Bpod signals are recorded to a DAQ device running on a separate computer, set to False.
+# NB: When MAIN_SYNC is True, chained protocols are not supported.
+MAIN_SYNC: True
+device_bpod:
+  COM_BPOD: COM4
+  BPOD_TTL_TEST_DATE: null  # optional
+  BPOD_TTL_TEST_STATUS: null  # optional
+  SOUND_BOARD_BPOD_PORT: null  # optional
+  ROTARY_ENCODER_BPOD_PORT: 1  # optional
+device_frame2ttl:
+  COM_F2TTL: COM6
+  F2TTL_CALIBRATION_DATE: 1970-12-31
+  F2TTL_DARK_THRESH: 91.0
+  F2TTL_HW_VERSION: null
+  F2TTL_LIGHT_THRESH: 51.0
+device_rotary_encoder:
+  COM_ROTARY_ENCODER: COM5
+device_screen:
+  DISPLAY_IDX: 1
+  SCREEN_FREQ_TARGET: 60
+  SCREEN_FREQ_TEST_DATE: null  # optional
+  SCREEN_FREQ_TEST_STATUS: null  # optional
+  SCREEN_LUX_DATE: null  # optional
+  SCREEN_LUX_VALUE: null  # optional
+device_sound:
+  OUTPUT: sysdefault  # harp or xonar or sysdefault
+device_microphone:
+  BONSAI_WORKFLOW: devices/microphone/record_mic.bonsai
+device_valve:
+  WATER_CALIBRATION_DATE: 1970-12-31
+  WATER_CALIBRATION_OPEN_TIMES: [50, 100]
+  WATER_CALIBRATION_RANGE: [40, 140]
+  WATER_CALIBRATION_WEIGHT_PERDROP: [1.25, 2.75]
+device_cameras:  # remove the whole section if no camera is used on the rig
+  left:
+    BONSAI_WORKFLOW: devices/camera_recordings/TrainingRig_SaveVideo_TrainingTasks.bonsai
+VERSION: 1.0.0
