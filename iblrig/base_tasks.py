@@ -88,7 +88,7 @@ class BaseSession(ABC):
         self.logger = None
         self._setup_loggers(level=log_level)
         self.logger.info(f'Running iblrig {iblrig.__version__}, pybpod version {pybpodapi.__version__}')
-        self.interactive = False if append else interactive
+        self.interactive = False
         self._one = one
         self.init_datetime = datetime.datetime.now()
         # Create the folder architecture and get the paths property updated
@@ -405,9 +405,10 @@ class BaseSession(ABC):
             )
 
         def sigint_handler(*args, **kwargs):
+            pass
             # create a signal handler for a graceful exit: create a stop flag in the session folder
-            self.paths.SESSION_FOLDER.joinpath('.stop').touch()
-            self.logger.critical('SIGINT signal detected, will exit at the end of the trial')
+            # self.paths.SESSION_FOLDER.joinpath('.stop').touch()
+            # self.logger.critical('SIGINT signal detected, will exit at the end of the trial')
 
         # if upon starting there is a flag just remove it, this is to prevent killing a session in the egg
         if self.paths.SESSION_FOLDER.joinpath('.stop').exists():

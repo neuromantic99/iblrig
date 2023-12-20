@@ -161,6 +161,9 @@ class ChoiceWorldSession(
         :return:
         """
         # make the bpod send spacer signals to the main sync clock for protocol discovery
+
+        # This is the run
+
         self.send_spacers()
         time_last_trial_end = time.time()
         for i in range(self.task_params.NTRIALS):  # Main loop
@@ -277,6 +280,8 @@ class ChoiceWorldSession(
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
+        # Temp fix for no camera
+        i += 1
         if i == 0:  # First trial exception start camera
             session_delay_start = self.task_params.get('SESSION_DELAY_START', 0)
             log.info('First trial initializing, will move to next trial only if:')

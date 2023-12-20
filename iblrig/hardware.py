@@ -101,6 +101,7 @@ class Bpod(BpodIO):
         mod = [x for x in self.modules if x.name == mod_name]
         if mod:
             return mod[0]
+        raise ValueError(f'Module {module} not found')
 
     def _define_message(self, module, message):
         """
