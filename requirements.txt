@@ -1,0 +1,7 @@
+pybpod
+pybpod-gui-plugin-rotaryencoder
+pydantic
+python-osc
+opencv-python-headless<4.3
+panda3d
+sounddevice
