@@ -1,7 +1,13 @@
 import re
 import sys
 from pathlib import Path
-from subprocess import STDOUT, CalledProcessError, SubprocessError, check_call, check_output
+from subprocess import (
+    STDOUT,
+    CalledProcessError,
+    SubprocessError,
+    check_call,
+    check_output,
+)
 
 import requests
 from packaging import version
@@ -11,7 +17,7 @@ from iblrig.constants import BASE_DIR, IS_GIT
 from iblrig.tools import ask_user, internet_available, static_vars
 from iblutil.util import setup_logger
 
-log = setup_logger('iblrig')
+log = setup_logger("iblrig")
 
 
 def check_for_updates() -> tuple[bool, str]:
@@ -27,7 +33,7 @@ def check_for_updates() -> tuple[bool, str]:
             - A string representing the latest available version, or None if
               no remote version information is available.
     """
-    log.info('Checking for updates ...')
+    log.info("Checking for updates ...")
 
     update_available = False
     v_local = get_local_version()
@@ -36,11 +42,11 @@ def check_for_updates() -> tuple[bool, str]:
     if v_local and v_remote:
         update_available = v_remote.base_version > v_local.base_version
         if update_available:
-            log.info(f'Update to iblrig {v_remote.base_version} available')
+            log.info(f"Update to iblrig {v_remote.base_version} available")
         else:
-            log.info('No update available')
+            log.info("No update available")
 
-    return update_available, v_remote.base_version if v_remote else ''
+    return update_available, v_remote.base_version if v_remote else ""
 
 
 def get_local_version() -> version.Version | None:
@@ -58,10 +64,10 @@ def get_local_version() -> version.Version | None:
         parsing fails.
     """
     try:
-        log.debug('Parsing local version string')
+        log.debug("Parsing local version string")
         return version.parse(__version__)
     except (version.InvalidVersion, TypeError):
-        log.error(f'Could not parse local version string: {__version__}')
+        log.error(f"Could not parse local version string: {__version__}")
         return None
 
 
@@ -95,12 +101,12 @@ def get_detailed_version_string(v_basic: str) -> str:
         return v_basic
 
     if not IS_GIT:
-        log.error('This installation of IBLRIG is not managed through git.')
+        log.error("This installation of IBLRIG is not managed through git.")
         return v_basic
 
     # sanitize & check if input only consists of three fields - major, minor and patch - separated by dots
-    v_sanitized = re.sub(r'^(\d+\.\d+\.\d+).*$$', r'\1', v_basic)
-    if not re.match(r'^\d+\.\d+\.\d+$', v_sanitized):
+    v_sanitized = re.sub(r"^(\d+\.\d+\.\d+).*$$", r"\1", v_basic)
+    if not re.match(r"^\d+\.\d+\.\d+$", v_sanitized):
         log.error(f"Couldn't parse version string: {v_basic}")
         return v_basic
 
@@ -108,7 +114,16 @@ def get_detailed_version_string(v_basic: str) -> str:
     try:
         get_remote_tags()
         v_detailed = check_output(
-            ['git', 'describe', '--dirty', '--broken', '--match', v_sanitized, '--tags', '--long'],
+            [
+                "git",
+                "describe",
+                "--dirty",
+                "--broken",
+                "--match",
+                v_sanitized,
+                "--tags",
+                "--long",
+            ],
             cwd=BASE_DIR,
             text=True,
             timeout=1,
@@ -119,9 +134,13 @@ def get_detailed_version_string(v_basic: str) -> str:
         return v_basic
 
     # apply a bit of regex magic for formatting & return the detailed version string
-    v_detailed = re.sub(r'^((?:[\d+\.])+)(-[1-9]\d*)?(?:-0\d*)?(?:-\w+)(-dirty|-broken)?\n?$', r'\1\2\3', v_detailed)
-    v_detailed = re.sub(r'-(\d+)', r'.post\1', v_detailed)
-    v_detailed = re.sub(r'\-(dirty|broken)', r'+\1', v_detailed)
+    v_detailed = re.sub(
+        r"^((?:[\d+\.])+)(-[1-9]\d*)?(?:-0\d*)?(?:-\w+)(-dirty|-broken)?\n?$",
+        r"\1\2\3",
+        v_detailed,
+    )
+    v_detailed = re.sub(r"-(\d+)", r".post\1", v_detailed)
+    v_detailed = re.sub(r"\-(dirty|broken)", r"+\1", v_detailed)
     return v_detailed
 
 
@@ -146,11 +165,14 @@ def get_branch() -> str | None:
     if get_branch.branch is not None:
         return get_branch.branch
     if not IS_GIT:
-        log.error('This installation of iblrig is not managed through git')
+        log.error("This installation of iblrig is not managed through git")
     try:
         get_branch.branch = check_output(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'], cwd=BASE_DIR, timeout=5, text=True
-        ).removesuffix('\n')
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=BASE_DIR,
+            timeout=5,
+            text=True,
+        ).removesuffix("\n")
         return get_branch.branch
     except (SubprocessError, CalledProcessError):
         return None
@@ -176,9 +198,13 @@ def get_remote_tags() -> None:
     if get_remote_tags.is_fetched_already or not internet_available():
         return
     if not IS_GIT:
-        log.error('This installation of iblrig is not managed through git')
+        log.error("This installation of iblrig is not managed through git")
     try:
-        check_call(['git', 'fetch', 'origin', get_branch(), '-t', '-q', '-f'], cwd=BASE_DIR, timeout=5)
+        check_call(
+            ["git", "fetch", "origin", get_branch(), "-t", "-q", "-f"],
+            cwd=BASE_DIR,
+            timeout=5,
+        )
     except (SubprocessError, CalledProcessError):
         return
     get_remote_tags.is_fetched_already = True
@@ -208,10 +234,11 @@ def get_changelog() -> str:
         return get_changelog.changelog
     try:
         changelog = requests.get(
-            f'https://raw.githubusercontent.com/int-brain-lab/iblrig/{get_branch()}/CHANGELOG.md', allow_redirects=True
+            f"https://raw.githubusercontent.com/int-brain-lab/iblrig/{get_branch()}/CHANGELOG.md",
+            allow_redirects=True,
         ).text
     except requests.RequestException:
-        with open(Path(BASE_DIR).joinpath('CHANGELOG.md')) as f:
+        with open(Path(BASE_DIR).joinpath("CHANGELOG.md")) as f:
             changelog = f.read()
     get_changelog.changelog = changelog
     return get_changelog.changelog
@@ -236,37 +263,51 @@ def get_remote_version() -> version.Version | None:
     This method will only work with installations managed through Git.
     """
     if get_remote_version.remote_version is not None:
-        log.debug(f'Using cached remote version: {get_remote_version.remote_version}')
+        log.debug(f"Using cached remote version: {get_remote_version.remote_version}")
         return get_remote_version.remote_version
 
     if not IS_GIT:
-        log.error('Cannot obtain remote version: This installation of iblrig is not managed through git')
+        log.error(
+            "Cannot obtain remote version: This installation of iblrig is not managed through git"
+        )
         return None
 
     if not internet_available():
-        log.error('Cannot obtain remote version: Not connected to internet')
+        log.error("Cannot obtain remote version: Not connected to internet")
         return None
 
     try:
-        log.debug('Obtaining remote version from github')
+        log.debug("Obtaining remote version from github")
         get_remote_tags()
         references = check_output(
-            ['git', 'ls-remote', '-t', '-q', '--exit-code', '--refs', 'origin', 'tags', '*'],
+            [
+                "git",
+                "ls-remote",
+                "-t",
+                "-q",
+                "--exit-code",
+                "--refs",
+                "origin",
+                "tags",
+                "*",
+            ],
             cwd=BASE_DIR,
             timeout=5,
-            encoding='UTF-8',
+            encoding="UTF-8",
         )
 
     except (SubprocessError, CalledProcessError, FileNotFoundError):
-        log.error('Could not obtain remote version string')
+        log.error("Could not obtain remote version string")
         return None
 
     try:
-        log.debug('Parsing local version string')
-        get_remote_version.remote_version = max([version.parse(v) for v in re.findall(r'/(\d+\.\d+\.\d+)', references)])
+        log.debug("Parsing local version string")
+        get_remote_version.remote_version = max(
+            [version.parse(v) for v in re.findall(r"/(\d+\.\d+\.\d+)", references)]
+        )
         return get_remote_version.remote_version
     except (version.InvalidVersion, TypeError):
-        log.error('Could not parse remote version string')
+        log.error("Could not parse remote version string")
         return None
 
 
@@ -281,7 +322,7 @@ def is_dirty() -> bool:
               False if the directory is clean (no uncommitted changes).
     """
     try:
-        return check_call(['git', 'diff', '--quiet'], cwd=BASE_DIR) != 0
+        return check_call(["git", "diff", "--quiet"], cwd=BASE_DIR) != 0
     except CalledProcessError:
         return True
 
@@ -313,37 +354,43 @@ def upgrade() -> int:
     the user is in the IBLRIG virtual environment.
     """
     if not internet_available():
-        raise Exception('Connection to internet not available.')
+        raise Exception("Connection to internet not available.")
     if not IS_GIT:
-        raise Exception('This installation of IBLRIG is not managed through git.')
+        raise Exception("This installation of IBLRIG is not managed through git.")
     if sys.base_prefix == sys.prefix:
-        raise Exception('You need to be in the IBLRIG venv in order to upgrade.')
+        raise Exception("You need to be in the IBLRIG venv in order to upgrade.")
 
     try:
         v_local = get_local_version()
         assert v_local
     except AssertionError as e:
-        raise Exception('Could not obtain local version.') from e
+        raise Exception("Could not obtain local version.") from e
 
     try:
         v_remote = get_remote_version()
         assert v_remote
     except AssertionError as e:
-        raise Exception('Could not obtain remote version.') from e
+        raise Exception("Could not obtain remote version.") from e
 
-    print(f'Local version:  {v_local}')
-    print(f'Remote version: {v_remote}\n')
+    print(f"Local version:  {v_local}")
+    print(f"Remote version: {v_remote}\n")
 
-    if v_local >= v_remote and not ask_user('No need to upgrade. Do you want to run the upgrade routine anyways?', False):
+    if v_local >= v_remote and not ask_user(
+        "No need to upgrade. Do you want to run the upgrade routine anyways?", False
+    ):
         return 0
 
     if is_dirty():
-        print('There are changes in your local copy of IBLRIG that will be lost when upgrading.')
-        if not ask_user('Do you want to proceed?', False):
+        print(
+            "There are changes in your local copy of IBLRIG that will be lost when upgrading."
+        )
+        if not ask_user("Do you want to proceed?", False):
             return 0
-        check_call(['git', 'reset', '--hard'], cwd=BASE_DIR)
+        check_call(["git", "reset", "--hard"], cwd=BASE_DIR)
 
-    check_call(['git', 'pull', '--tags'], cwd=BASE_DIR)
-    check_call([sys.executable, '-m', 'pip', 'install', '-U', 'pip'], cwd=BASE_DIR)
-    check_call([sys.executable, '-m', 'pip', 'install', '-U', '-e', BASE_DIR], cwd=BASE_DIR)
+    check_call(["git", "pull", "--tags"], cwd=BASE_DIR)
+    check_call([sys.executable, "-m", "pip", "install", "-U", "pip"], cwd=BASE_DIR)
+    check_call(
+        [sys.executable, "-m", "pip", "install", "-U", "-e", BASE_DIR], cwd=BASE_DIR
+    )
     return 0

@@ -5,10 +5,12 @@ import pandas as pd
 
 from iblutil.util import setup_logger
 
-log = setup_logger('iblrig')
+log = setup_logger("iblrig")
 
 
-def load_task_jsonable(jsonable_file: str, offset: int | None = None) -> tuple[pd.DataFrame, list[Any]]:
+def load_task_jsonable(
+    jsonable_file: str, offset: int | None = None
+) -> tuple[pd.DataFrame, list[Any]]:
     """
     Reads in a task data jsonable file and returns a trials dataframe and a bpod data list.
 
@@ -31,7 +33,7 @@ def load_task_jsonable(jsonable_file: str, offset: int | None = None) -> tuple[p
     # pop-out the bpod data from the table
     bpod_data = []
     for td in trials_table:
-        bpod_data.append(td.pop('behavior_data'))
+        bpod_data.append(td.pop("behavior_data"))
 
     trials_table = pd.DataFrame(trials_table)
     return trials_table, bpod_data

@@ -1,4 +1,3 @@
-
 # Form implementation generated from reading ui file 'iblrig/gui/ui_wizard.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -14,7 +13,9 @@ class Ui_wizard:
     def setupUi(self, wizard):
         wizard.setObjectName("wizard")
         wizard.resize(391, 660)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(wizard.sizePolicy().hasHeightForWidth())
@@ -24,24 +25,32 @@ class Ui_wizard:
         wizard.setSizeIncrement(QtCore.QSize(0, 0))
         wizard.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("iblrig/gui/wizard.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(
+            QtGui.QPixmap("iblrig/gui/wizard.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off
+        )
         wizard.setWindowIcon(icon)
         wizard.setWindowOpacity(1.0)
         wizard.setAutoFillBackground(False)
         wizard.setAnimated(False)
         wizard.setDocumentMode(False)
         self.centralwidget = QtWidgets.QWidget(wizard)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.centralwidget.sizePolicy().hasHeightForWidth()
+        )
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setMinimumSize(QtCore.QSize(0, 0))
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
         self.uiGroupTools = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiGroupTools.sizePolicy().hasHeightForWidth())
@@ -52,7 +61,9 @@ class Ui_wizard:
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.uiPushFlush = QtWidgets.QPushButton(self.uiGroupTools)
         self.uiPushFlush.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushFlush.sizePolicy().hasHeightForWidth())
@@ -61,7 +72,9 @@ class Ui_wizard:
         self.uiPushFlush.setObjectName("uiPushFlush")
         self.gridLayout_3.addWidget(self.uiPushFlush, 0, 0, 1, 1)
         self.uiPushHelp = QtWidgets.QPushButton(self.uiGroupTools)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushHelp.sizePolicy().hasHeightForWidth())
@@ -74,22 +87,30 @@ class Ui_wizard:
         self.gridLayout_3.addWidget(self.uiPushStatusLED, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.uiGroupTools, 6, 0, 1, 1)
         self.uiGroupParameters = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiGroupParameters.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiGroupParameters.sizePolicy().hasHeightForWidth()
+        )
         self.uiGroupParameters.setSizePolicy(sizePolicy)
         self.uiGroupParameters.setObjectName("uiGroupParameters")
         self.formLayout = QtWidgets.QFormLayout(self.uiGroupParameters)
         self.formLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.formLayout.setFieldGrowthPolicy(QtWidgets.QFormLayout.ExpandingFieldsGrow)
-        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout.setLabelAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.formLayout.setObjectName("formLayout")
         self.label = QtWidgets.QLabel(self.uiGroupParameters)
         self.label.setObjectName("label")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label)
         self.frame_3 = QtWidgets.QFrame(self.uiGroupParameters)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())
@@ -100,7 +121,9 @@ class Ui_wizard:
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.uiComboUser = QtWidgets.QComboBox(self.frame_3)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiComboUser.sizePolicy().hasHeightForWidth())
@@ -109,10 +132,14 @@ class Ui_wizard:
         self.uiComboUser.setObjectName("uiComboUser")
         self.horizontalLayout_2.addWidget(self.uiComboUser)
         self.uiPushConnect = QtWidgets.QPushButton(self.frame_3)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiPushConnect.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiPushConnect.sizePolicy().hasHeightForWidth()
+        )
         self.uiPushConnect.setSizePolicy(sizePolicy)
         self.uiPushConnect.setMaximumSize(QtCore.QSize(150, 16777215))
         self.uiPushConnect.setToolTip("")
@@ -123,7 +150,9 @@ class Ui_wizard:
         self.label_2.setObjectName("label_2")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
         self.frame_2 = QtWidgets.QFrame(self.uiGroupParameters)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
@@ -134,19 +163,27 @@ class Ui_wizard:
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiComboSubject = QtWidgets.QComboBox(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiComboSubject.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiComboSubject.sizePolicy().hasHeightForWidth()
+        )
         self.uiComboSubject.setSizePolicy(sizePolicy)
         self.uiComboSubject.setMinimumSize(QtCore.QSize(0, 0))
         self.uiComboSubject.setObjectName("uiComboSubject")
         self.horizontalLayout.addWidget(self.uiComboSubject)
         self.lineEditSubject = QtWidgets.QLineEdit(self.frame_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEditSubject.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.lineEditSubject.sizePolicy().hasHeightForWidth()
+        )
         self.lineEditSubject.setSizePolicy(sizePolicy)
         self.lineEditSubject.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.lineEditSubject.setObjectName("lineEditSubject")
@@ -156,7 +193,9 @@ class Ui_wizard:
         self.label_4.setObjectName("label_4")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_4)
         self.uiComboTask = QtWidgets.QComboBox(self.uiGroupParameters)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiComboTask.sizePolicy().hasHeightForWidth())
@@ -168,10 +207,14 @@ class Ui_wizard:
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_3)
         self.uiListProjects = QtWidgets.QListView(self.uiGroupParameters)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiListProjects.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiListProjects.sizePolicy().hasHeightForWidth()
+        )
         self.uiListProjects.setSizePolicy(sizePolicy)
         self.uiListProjects.setMaximumSize(QtCore.QSize(16777215, 80))
         palette = QtGui.QPalette()
@@ -194,20 +237,28 @@ class Ui_wizard:
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.HighlightedText, brush)
         self.uiListProjects.setPalette(palette)
-        self.uiListProjects.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.uiListProjects.viewport().setProperty(
+            "cursor", QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
         self.uiListProjects.setFocusPolicy(QtCore.Qt.TabFocus)
         self.uiListProjects.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.uiListProjects.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.uiListProjects.setObjectName("uiListProjects")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.uiListProjects)
+        self.formLayout.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.uiListProjects
+        )
         self.label_5 = QtWidgets.QLabel(self.uiGroupParameters)
         self.label_5.setObjectName("label_5")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.uiListProcedures = QtWidgets.QListView(self.uiGroupParameters)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiListProcedures.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiListProcedures.sizePolicy().hasHeightForWidth()
+        )
         self.uiListProcedures.setSizePolicy(sizePolicy)
         self.uiListProcedures.setMaximumSize(QtCore.QSize(16777215, 80))
         palette = QtGui.QPalette()
@@ -230,18 +281,30 @@ class Ui_wizard:
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.HighlightedText, brush)
         self.uiListProcedures.setPalette(palette)
-        self.uiListProcedures.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.uiListProcedures.viewport().setProperty(
+            "cursor", QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        )
         self.uiListProcedures.setFocusPolicy(QtCore.Qt.TabFocus)
-        self.uiListProcedures.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.uiListProcedures.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.uiListProcedures.setEditTriggers(
+            QtWidgets.QAbstractItemView.NoEditTriggers
+        )
+        self.uiListProcedures.setSelectionMode(
+            QtWidgets.QAbstractItemView.MultiSelection
+        )
         self.uiListProcedures.setObjectName("uiListProcedures")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.uiListProcedures)
+        self.formLayout.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.uiListProcedures
+        )
         self.gridLayout.addWidget(self.uiGroupParameters, 3, 0, 1, 2)
         self.uiGroupSessionControl = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiGroupSessionControl.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiGroupSessionControl.sizePolicy().hasHeightForWidth()
+        )
         self.uiGroupSessionControl.setSizePolicy(sizePolicy)
         self.uiGroupSessionControl.setObjectName("uiGroupSessionControl")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.uiGroupSessionControl)
@@ -262,23 +325,35 @@ class Ui_wizard:
         self.gridLayout.addWidget(self.uiGroupSessionControl, 5, 0, 1, 2)
         self.uiGroupTaskParameters = QtWidgets.QGroupBox(self.centralwidget)
         self.uiGroupTaskParameters.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiGroupTaskParameters.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiGroupTaskParameters.sizePolicy().hasHeightForWidth()
+        )
         self.uiGroupTaskParameters.setSizePolicy(sizePolicy)
         self.uiGroupTaskParameters.setMinimumSize(QtCore.QSize(0, 0))
         self.uiGroupTaskParameters.setObjectName("uiGroupTaskParameters")
         self.formLayout_3 = QtWidgets.QFormLayout(self.uiGroupTaskParameters)
-        self.formLayout_3.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_3.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout_3.setFieldGrowthPolicy(
+            QtWidgets.QFormLayout.AllNonFixedFieldsGrow
+        )
+        self.formLayout_3.setLabelAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.formLayout_3.setObjectName("formLayout_3")
         self.gridLayout.addWidget(self.uiGroupTaskParameters, 4, 0, 1, 2)
         self.uiGroupDiskSpace = QtWidgets.QGroupBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiGroupDiskSpace.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiGroupDiskSpace.sizePolicy().hasHeightForWidth()
+        )
         self.uiGroupDiskSpace.setSizePolicy(sizePolicy)
         self.uiGroupDiskSpace.setObjectName("uiGroupDiskSpace")
         self.formLayout_2 = QtWidgets.QFormLayout(self.uiGroupDiskSpace)
@@ -288,24 +363,42 @@ class Ui_wizard:
         self.uiProgressDiskSpace.setInvertedAppearance(False)
         self.uiProgressDiskSpace.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.uiProgressDiskSpace.setObjectName("uiProgressDiskSpace")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.SpanningRole, self.uiProgressDiskSpace)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.SpanningRole, self.uiProgressDiskSpace
+        )
         self.uiLabelDiskIblrig = QtWidgets.QLabel(self.uiGroupDiskSpace)
         self.uiLabelDiskIblrig.setObjectName("uiLabelDiskIblrig")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.uiLabelDiskIblrig)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.uiLabelDiskIblrig
+        )
         self.uiLabelDiskAvailableValue = QtWidgets.QLabel(self.uiGroupDiskSpace)
-        self.uiLabelDiskAvailableValue.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.uiLabelDiskAvailableValue.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.uiLabelDiskAvailableValue.setObjectName("uiLabelDiskAvailableValue")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.uiLabelDiskAvailableValue)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.uiLabelDiskAvailableValue
+        )
         self.uiLabelDiskAvailable = QtWidgets.QLabel(self.uiGroupDiskSpace)
         self.uiLabelDiskAvailable.setObjectName("uiLabelDiskAvailable")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.uiLabelDiskAvailable)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.uiLabelDiskAvailable
+        )
         self.uiLabelDiskIblrigValue = QtWidgets.QLabel(self.uiGroupDiskSpace)
-        self.uiLabelDiskIblrigValue.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.uiLabelDiskIblrigValue.setAlignment(
+            QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter
+        )
         self.uiLabelDiskIblrigValue.setObjectName("uiLabelDiskIblrigValue")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.uiLabelDiskIblrigValue)
-        spacerItem = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.uiLabelDiskIblrigValue
+        )
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.formLayout_2.setItem(0, QtWidgets.QFormLayout.SpanningRole, spacerItem)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.formLayout_2.setItem(4, QtWidgets.QFormLayout.SpanningRole, spacerItem1)
         self.gridLayout.addWidget(self.uiGroupDiskSpace, 6, 1, 1, 1)
         wizard.setCentralWidget(self.centralwidget)
@@ -343,33 +436,59 @@ class Ui_wizard:
         self.uiGroupTools.setTitle(_translate("wizard", "Tools"))
         self.uiPushFlush.setStatusTip(_translate("wizard", "flush the valve"))
         self.uiPushFlush.setText(_translate("wizard", " Flush Valve"))
-        self.uiPushHelp.setStatusTip(_translate("wizard", "open the iblrig documentation in your browser"))
+        self.uiPushHelp.setStatusTip(
+            _translate("wizard", "open the iblrig documentation in your browser")
+        )
         self.uiPushHelp.setText(_translate("wizard", "  Help!"))
-        self.uiPushStatusLED.setStatusTip(_translate("wizard", "toggle the Bpod Status LED (always off during sessions)"))
+        self.uiPushStatusLED.setStatusTip(
+            _translate(
+                "wizard", "toggle the Bpod Status LED (always off during sessions)"
+            )
+        )
         self.uiPushStatusLED.setText(_translate("wizard", " Status LED"))
         self.uiGroupParameters.setTitle(_translate("wizard", "General Parameters"))
         self.label.setText(_translate("wizard", "Alyx User"))
-        self.uiComboUser.setStatusTip(_translate("wizard", "enter or select your Alyx username"))
+        self.uiComboUser.setStatusTip(
+            _translate("wizard", "enter or select your Alyx username")
+        )
         self.uiPushConnect.setStatusTip(_translate("wizard", "connect to Alyx"))
         self.uiPushConnect.setText(_translate("wizard", "Connect"))
         self.label_2.setText(_translate("wizard", "Subject"))
         self.uiComboSubject.setStatusTip(_translate("wizard", "choose a subject"))
-        self.lineEditSubject.setStatusTip(_translate("wizard", "filter displayed subjects by name"))
+        self.lineEditSubject.setStatusTip(
+            _translate("wizard", "filter displayed subjects by name")
+        )
         self.lineEditSubject.setPlaceholderText(_translate("wizard", "Filter"))
         self.label_4.setText(_translate("wizard", "Task"))
-        self.uiComboTask.setStatusTip(_translate("wizard", "choose a task for the session"))
+        self.uiComboTask.setStatusTip(
+            _translate("wizard", "choose a task for the session")
+        )
         self.label_3.setText(_translate("wizard", "Project"))
-        self.uiListProjects.setStatusTip(_translate("wizard", "select one or several projects for the session (mandatory)"))
+        self.uiListProjects.setStatusTip(
+            _translate(
+                "wizard", "select one or several projects for the session (mandatory)"
+            )
+        )
         self.label_5.setText(_translate("wizard", "Procedure"))
-        self.uiListProcedures.setStatusTip(_translate("wizard", "select one or several procedures for the session (mandatory)"))
+        self.uiListProcedures.setStatusTip(
+            _translate(
+                "wizard", "select one or several procedures for the session (mandatory)"
+            )
+        )
         self.uiGroupSessionControl.setTitle(_translate("wizard", "Session Control"))
-        self.uiPushPause.setStatusTip(_translate("wizard", "pause the session after the current trial"))
+        self.uiPushPause.setStatusTip(
+            _translate("wizard", "pause the session after the current trial")
+        )
         self.uiPushPause.setText(_translate("wizard", "Pause"))
         self.uiPushStart.setStatusTip(_translate("wizard", "start the session"))
         self.uiPushStart.setText(_translate("wizard", "Start"))
-        self.uiCheckAppend.setStatusTip(_translate("wizard", "append to previous session"))
+        self.uiCheckAppend.setStatusTip(
+            _translate("wizard", "append to previous session")
+        )
         self.uiCheckAppend.setText(_translate("wizard", "Append"))
-        self.uiGroupTaskParameters.setTitle(_translate("wizard", "Task Specific Parameters"))
+        self.uiGroupTaskParameters.setTitle(
+            _translate("wizard", "Task Specific Parameters")
+        )
         self.uiGroupDiskSpace.setTitle(_translate("wizard", "Disk Usage"))
         self.uiLabelDiskIblrig.setText(_translate("wizard", "IBL Rig Data:"))
         self.uiLabelDiskAvailableValue.setText(_translate("wizard", "80.3 GB"))

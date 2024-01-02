@@ -1,4 +1,3 @@
-
 # Form implementation generated from reading ui file 'ui_update.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
@@ -14,7 +13,9 @@ class Ui_update:
     def setupUi(self, update):
         update.setObjectName("update")
         update.resize(451, 496)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(update.sizePolicy().hasHeightForWidth())
@@ -35,7 +36,9 @@ class Ui_update:
         self.uiLabelLogo.setScaledContents(True)
         self.uiLabelLogo.setObjectName("uiLabelLogo")
         self.uiLayoutLogo.addWidget(self.uiLabelLogo)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.uiLayoutLogo.addItem(spacerItem)
         self.horizontalLayout_2.addLayout(self.uiLayoutLogo)
         self.uiLayoutRight = QtWidgets.QVBoxLayout()
@@ -44,37 +47,53 @@ class Ui_update:
         self.uiLabelHeader.setObjectName("uiLabelHeader")
         self.uiLayoutRight.addWidget(self.uiLabelHeader)
         self.uiTextBrowserChanges = QtWidgets.QTextBrowser(update)
-        self.uiTextBrowserChanges.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.uiTextBrowserChanges.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.uiTextBrowserChanges.setVerticalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAlwaysOn
+        )
+        self.uiTextBrowserChanges.setHorizontalScrollBarPolicy(
+            QtCore.Qt.ScrollBarAlwaysOff
+        )
         self.uiTextBrowserChanges.setMarkdown("")
         self.uiTextBrowserChanges.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.uiTextBrowserChanges.setObjectName("uiTextBrowserChanges")
         self.uiLayoutRight.addWidget(self.uiTextBrowserChanges)
         self.uiLabelFooter = QtWidgets.QLabel(update)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.uiLabelFooter.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.uiLabelFooter.sizePolicy().hasHeightForWidth()
+        )
         self.uiLabelFooter.setSizePolicy(sizePolicy)
-        self.uiLabelFooter.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.uiLabelFooter.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.uiLabelFooter.setWordWrap(True)
         self.uiLabelFooter.setObjectName("uiLabelFooter")
         self.uiLayoutRight.addWidget(self.uiLabelFooter)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         self.uiLayoutRight.addItem(spacerItem1)
         self.uiLayoutCommand = QtWidgets.QHBoxLayout()
         self.uiLayoutCommand.setObjectName("uiLayoutCommand")
-        spacerItem2 = QtWidgets.QSpacerItem(1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.uiLayoutCommand.addItem(spacerItem2)
         self.uiLineEditCommand = QtWidgets.QLineEdit(update)
         self.uiLineEditCommand.setAlignment(QtCore.Qt.AlignCenter)
         self.uiLineEditCommand.setReadOnly(True)
         self.uiLineEditCommand.setObjectName("uiLineEditCommand")
         self.uiLayoutCommand.addWidget(self.uiLineEditCommand)
-        spacerItem3 = QtWidgets.QSpacerItem(1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.uiLayoutCommand.addItem(spacerItem3)
         self.uiLayoutRight.addLayout(self.uiLayoutCommand)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed
+        )
         self.uiLayoutRight.addItem(spacerItem4)
         self.uiLine = QtWidgets.QFrame(update)
         self.uiLine.setFrameShape(QtWidgets.QFrame.HLine)
@@ -83,7 +102,9 @@ class Ui_update:
         self.uiLayoutRight.addWidget(self.uiLine)
         self.uiLayoutButton = QtWidgets.QHBoxLayout()
         self.uiLayoutButton.setObjectName("uiLayoutButton")
-        spacerItem5 = QtWidgets.QSpacerItem(1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            1, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
         self.uiLayoutButton.addItem(spacerItem5)
         self.uiPushButtonOK = QtWidgets.QPushButton(update)
         self.uiPushButtonOK.setObjectName("uiPushButtonOK")
@@ -93,13 +114,18 @@ class Ui_update:
         self.horizontalLayout_2.setStretch(1, 100)
 
         self.retranslateUi(update)
-        self.uiPushButtonOK.released.connect(update.close) # type: ignore
+        self.uiPushButtonOK.released.connect(update.close)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(update)
 
     def retranslateUi(self, update):
         _translate = QtCore.QCoreApplication.translate
         update.setWindowTitle(_translate("update", "Update Notice"))
         self.uiLabelHeader.setText(_translate("update", "Update Available!"))
-        self.uiLabelFooter.setText(_translate("update", "To update, close IBL Rig Wizard and run the following command within the iblrigv8 Python environment:"))
+        self.uiLabelFooter.setText(
+            _translate(
+                "update",
+                "To update, close IBL Rig Wizard and run the following command within the iblrigv8 Python environment:",
+            )
+        )
         self.uiLineEditCommand.setText(_translate("update", "upgrade_iblrig"))
         self.uiPushButtonOK.setText(_translate("update", "OK"))

@@ -10,7 +10,9 @@ import tkinter as tk
 from tkinter import simpledialog
 
 
-def numinput(title, prompt, default=None, minval=None, maxval=None, nullable=False, askint=False):
+def numinput(
+    title, prompt, default=None, minval=None, maxval=None, nullable=False, askint=False
+):
     root = tk.Tk()
     root.withdraw()
     ask = simpledialog.askinteger if askint else simpledialog.askfloat

@@ -15,12 +15,14 @@ class TestEntryPoints(unittest.TestCase):
             AssertionError: If loaded entry points are not callable.
         """
         iblrig_scripts = []
-        for ep in entry_points(group='console_scripts'):
-            if ep.value.startswith('iblrig.'):
+        for ep in entry_points(group="console_scripts"):
+            if ep.value.startswith("iblrig."):
                 try:
                     loaded_ep = ep.load()
                     iblrig_scripts.append((ep.name, loaded_ep))
                 except Exception as e:
                     print(f"Error loading entry point '{ep.name}': {str(e)}")
 
-        assert all(isinstance(script[1], Callable) for script in iblrig_scripts), 'Loaded entry points are not callable.'
+        assert all(
+            isinstance(script[1], Callable) for script in iblrig_scripts
+        ), "Loaded entry points are not callable."

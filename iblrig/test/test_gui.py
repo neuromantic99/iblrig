@@ -10,7 +10,7 @@ class TestRigWizardModel(unittest.TestCase):
         self.wizard = RigWizardModel()
 
     def test_connect(self):
-        self.wizard.connect(one=ONE(**TEST_DB, mode='remote'))
+        self.wizard.connect(one=ONE(**TEST_DB, mode="remote"))
         assert len(self.wizard.all_projects) > len(PROJECTS)
 
     def test_get_task_extra_kwargs(self):
@@ -22,17 +22,19 @@ class TestRigWizardModel(unittest.TestCase):
         for task_name in self.wizard.all_tasks:
             with self.subTest(task_name=task_name):
                 parser = self.wizard.get_task_extra_parser(task_name)
-                extra_args = [{act.option_strings[0]: act.type} for act in parser._actions]
+                extra_args = [
+                    {act.option_strings[0]: act.type} for act in parser._actions
+                ]
                 match task_name:
-                    case '_iblrig_tasks_advancedChoiceWorld':
+                    case "_iblrig_tasks_advancedChoiceWorld":
                         expect = 6
-                    case '_iblrig_tasks_trainingPhaseChoiceWorld':
+                    case "_iblrig_tasks_trainingPhaseChoiceWorld":
                         expect = 3
-                    case '_iblrig_tasks_trainingChoiceWorld':
+                    case "_iblrig_tasks_trainingChoiceWorld":
                         expect = 4
-                    case '_iblrig_tasks_ephysChoiceWorld':
+                    case "_iblrig_tasks_ephysChoiceWorld":
                         expect = 2
-                    case '_iblrig_tasks_spontaneous' | 'plau_oddBallAudio':
+                    case "_iblrig_tasks_spontaneous" | "plau_oddBallAudio":
                         expect = 0
                     case _:
                         print(task_name)

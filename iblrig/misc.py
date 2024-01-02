@@ -15,13 +15,13 @@ import numpy as np
 from iblutil.util import setup_logger
 
 FLAG_FILE_NAMES = [
-    'transfer_me.flag',
-    'create_me.flag',
-    'poop_count.flag',
-    'passive_data_for_ephys.flag',
+    "transfer_me.flag",
+    "create_me.flag",
+    "poop_count.flag",
+    "passive_data_for_ephys.flag",
 ]
 
-log = setup_logger('iblrig')
+log = setup_logger("iblrig")
 
 
 def _get_task_argument_parser(parents=None):
@@ -30,36 +30,51 @@ def _get_task_argument_parser(parents=None):
     This function is kept separate from parsing for unit tests purposes.
     """
     parser = argparse.ArgumentParser(parents=parents or [])
-    parser.add_argument('-s', '--subject', required=True, help='--subject ZFM-05725')
-    parser.add_argument('-u', '--user', required=False, default=None, help='alyx username to register the session')
+    parser.add_argument("-s", "--subject", required=True, help="--subject ZFM-05725")
     parser.add_argument(
-        '-p',
-        '--projects',
-        nargs='+',
+        "-u",
+        "--user",
+        required=False,
+        default=None,
+        help="alyx username to register the session",
+    )
+    parser.add_argument(
+        "-p",
+        "--projects",
+        nargs="+",
         default=[],
         help="project name(s), something like 'psychedelics' or 'ibl_neuropixel_brainwide_01'; if specify "
-        'multiple projects, use a space to separate them',
+        "multiple projects, use a space to separate them",
     )
     parser.add_argument(
-        '-c',
-        '--procedures',
-        nargs='+',
+        "-c",
+        "--procedures",
+        nargs="+",
         default=[],
         help="long description of what is occurring, something like 'Ephys recording with acute probe(s)'; "
-        'be sure to use the double quote characters to encapsulate the description and a space to separate '
-        'multiple procedures',
+        "be sure to use the double quote characters to encapsulate the description and a space to separate "
+        "multiple procedures",
     )
-    parser.add_argument('-w', '--weight', type=float, dest='subject_weight_grams', required=False, default=None)
-    parser.add_argument('--no-interactive', dest='interactive', action='store_false')
-    parser.add_argument('--append', dest='append', action='store_true')
-    parser.add_argument('--stub', type=Path, help='Path to _ibl_experiment.description.yaml stub file.')
     parser.add_argument(
-        '--log-level',
-        default='INFO',
-        help='verbosity of the console logger (default: INFO)',
-        choices=['NOTSET', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'],
+        "-w",
+        "--weight",
+        type=float,
+        dest="subject_weight_grams",
+        required=False,
+        default=None,
     )
-    parser.add_argument('--wizard', dest='wizard', action='store_true')
+    parser.add_argument("--no-interactive", dest="interactive", action="store_false")
+    parser.add_argument("--append", dest="append", action="store_true")
+    parser.add_argument(
+        "--stub", type=Path, help="Path to _ibl_experiment.description.yaml stub file."
+    )
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        help="verbosity of the console logger (default: INFO)",
+        choices=["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"],
+    )
+    parser.add_argument("--wizard", dest="wizard", action="store_true")
     return parser
 
 
@@ -72,9 +87,9 @@ def _post_parse_arguments(**kwargs):
     :return:
     """
     # if the user is specified, then override the settings file value
-    user = kwargs.pop('user')
+    user = kwargs.pop("user")
     if user is not None:
-        kwargs['iblrig_settings'] = {'ALYX_USER': user}
+        kwargs["iblrig_settings"] = {"ALYX_USER": user}
     return kwargs
 
 
@@ -107,7 +122,7 @@ def _is_datetime(x: str) -> bool:
         True if the string matches the date format, False otherwise, or None if there's an exception.
     """
     try:
-        datetime.strptime(x, '%Y-%m-%d')
+        datetime.strptime(x, "%Y-%m-%d")
         return True
     except ValueError:
         return False
@@ -128,7 +143,7 @@ def get_session_path(path: str | Path) -> Path | None:
     return sess
 
 
-def get_port_events(events: dict, name: str = '') -> list:
+def get_port_events(events: dict, name: str = "") -> list:
     out: list = []
     for k in events:
         if name in k:
@@ -138,7 +153,9 @@ def get_port_events(events: dict, name: str = '') -> list:
     return out
 
 
-def truncated_exponential(scale: float = 0.35, min_value: float = 0.2, max_value: float = 0.5) -> float:
+def truncated_exponential(
+    scale: float = 0.35, min_value: float = 0.2, max_value: float = 0.5
+) -> float:
     """
     Generate a truncated exponential random variable within a specified range.
 
@@ -206,9 +223,9 @@ def get_biased_probs(n: int, idx: int = -1, p_idx: float = 0.5) -> list[float]:
     if n == 1:
         return [1.0]
     if idx not in range(-n, n):
-        raise IndexError('`idx` is out of range.')
+        raise IndexError("`idx` is out of range.")
     if p_idx == 0:
-        raise ValueError('Probability must be larger than 0.')
+        raise ValueError("Probability must be larger than 0.")
     z = n - 1 + p_idx
     p = [1 / z] * n
     p[idx] *= p_idx
@@ -217,7 +234,7 @@ def get_biased_probs(n: int, idx: int = -1, p_idx: float = 0.5) -> list[float]:
 
 def draw_contrast(
     contrast_set: list[float],
-    probability_type: Literal['skew_zero', 'biased', 'uniform'] = 'biased',
+    probability_type: Literal["skew_zero", "biased", "uniform"] = "biased",
     idx: int = -1,
     idx_probability: float = 0.5,
 ) -> float:
@@ -248,16 +265,20 @@ def draw_contrast(
     ValueError
         If an unsupported `probability_type` is provided.
     """
-    if probability_type in ['skew_zero', 'biased']:
+    if probability_type in ["skew_zero", "biased"]:
         p = get_biased_probs(n=len(contrast_set), idx=idx, p_idx=idx_probability)
         return np.random.choice(contrast_set, p=p)
-    elif probability_type == 'uniform':
+    elif probability_type == "uniform":
         return np.random.choice(contrast_set)
     else:
-        raise ValueError("Unsupported probability_type. Use 'skew_zero', 'biased', or 'uniform'.")
+        raise ValueError(
+            "Unsupported probability_type. Use 'skew_zero', 'biased', or 'uniform'."
+        )
 
 
-def online_std(new_sample: float, new_count: int, old_mean: float, old_std: float) -> tuple[float, float]:
+def online_std(
+    new_sample: float, new_count: int, old_mean: float, old_std: float
+) -> tuple[float, float]:
     """
     Updates the mean and standard deviation of a group of values after a sample update
 
@@ -280,5 +301,11 @@ def online_std(new_sample: float, new_count: int, old_mean: float, old_std: floa
     if new_count == 1:
         return new_sample, 0.0
     new_mean = (old_mean * (new_count - 1) + new_sample) / new_count
-    new_std = np.sqrt((old_std**2 * (new_count - 1) + (new_sample - old_mean) * (new_sample - new_mean)) / new_count)
+    new_std = np.sqrt(
+        (
+            old_std**2 * (new_count - 1)
+            + (new_sample - old_mean) * (new_sample - new_mean)
+        )
+        / new_count
+    )
     return new_mean, new_std

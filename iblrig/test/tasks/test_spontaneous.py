@@ -9,5 +9,7 @@ class Spontaneous(IntegrationFullRuns):
 
     def test_task_spontaneous(self):
         self.task.run()
-        file_settings = self.task.paths.SESSION_RAW_DATA_FOLDER.joinpath('_iblrig_taskSettings.raw.json')
+        file_settings = self.task.paths.SESSION_RAW_DATA_FOLDER.joinpath(
+            "_iblrig_taskSettings.raw.json"
+        )
         self.read_and_assert_json_settings(file_settings)

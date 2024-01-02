@@ -34,8 +34,12 @@ class Corridor(ShowBase):
         textures = ["checkers.jpg", "floor.jpg", "checkers.jpg", "horGrat.jpg"]
 
         for i in range(4):
-            texture = self.loader.load_texture(f"iblrig/panda3d/corridor/textures/{textures[i]}")
-            model = self.loader.loadModel(f"/Users/jamesrowland/Code/iblrig/iblrig/panda3d/corridor/models/side{i+1}.obj")
+            texture = self.loader.load_texture(
+                f"iblrig/panda3d/corridor/textures/{textures[i]}"
+            )
+            model = self.loader.loadModel(
+                f"/Users/jamesrowland/Code/iblrig/iblrig/panda3d/corridor/models/side{i+1}.obj"
+            )
             # model = self.loader.loadModel(f"iblrig/panda3d/corridor/models/side{i+1}.obj")
 
             model.setTexture(texture, 1)

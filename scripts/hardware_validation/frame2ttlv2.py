@@ -2,8 +2,8 @@ import numpy as np
 
 from iblrig.frame2TTL import Frame2TTLv2
 
-COM_PORT = 'COM'
-f2ttl = Frame2TTLv2('/dev/ttyACM0')
+COM_PORT = "COM"
+f2ttl = Frame2TTLv2("/dev/ttyACM0")
 
 light_thresh = 24.8
 dark_thresh = -17.7

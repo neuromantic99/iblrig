@@ -9,7 +9,7 @@ from typing import Any
 
 from iblutil.util import setup_logger
 
-logger = setup_logger('iblrig')
+logger = setup_logger("iblrig")
 
 
 def ask_user(prompt: str, default: bool = False) -> bool:
@@ -36,29 +36,40 @@ def ask_user(prompt: str, default: bool = False) -> bool:
         False if the user responds with 'no'
     """
     while True:
-        user_input = input(f'{prompt} [Y/n] ' if default else f'{prompt} [y/N] ').strip().lower()
+        user_input = (
+            input(f"{prompt} [Y/n] " if default else f"{prompt} [y/N] ").strip().lower()
+        )
         if not user_input:
             return default
-        elif user_input in ['y', 'yes']:
+        elif user_input in ["y", "yes"]:
             return True
-        elif user_input in ['n', 'no']:
+        elif user_input in ["n", "no"]:
             return False
 
 
 def get_anydesk_id(silent: bool = False) -> str | None:
     anydesk_id = None
     try:
-        if cmd := shutil.which('anydesk'):
+        if cmd := shutil.which("anydesk"):
             pass
-        elif os.name == 'nt':
-            cmd = str(Path(os.environ['PROGRAMFILES(X86)'], 'AnyDesk', 'anydesk.exe'))
+        elif os.name == "nt":
+            cmd = str(Path(os.environ["PROGRAMFILES(X86)"], "AnyDesk", "anydesk.exe"))
         if cmd is None or not Path(cmd).exists():
-            raise FileNotFoundError('AnyDesk executable not found')
+            raise FileNotFoundError("AnyDesk executable not found")
 
-        proc = subprocess.Popen([cmd, '--get-id'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        if proc.stdout and re.match(r'^\d{10}$', id_string := next(proc.stdout).decode()):
-            anydesk_id = f'{int(id_string):,}'.replace(',', ' ')
-    except (FileNotFoundError, subprocess.CalledProcessError, StopIteration, UnicodeDecodeError) as e:
+        proc = subprocess.Popen(
+            [cmd, "--get-id"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        if proc.stdout and re.match(
+            r"^\d{10}$", id_string := next(proc.stdout).decode()
+        ):
+            anydesk_id = f"{int(id_string):,}".replace(",", " ")
+    except (
+        FileNotFoundError,
+        subprocess.CalledProcessError,
+        StopIteration,
+        UnicodeDecodeError,
+    ) as e:
         if silent:
             logger.debug(e, exc_info=True)
         else:
@@ -96,7 +107,9 @@ def static_vars(**kwargs) -> Callable[..., Any]:
 
 
 @static_vars(return_value=None)
-def internet_available(host: str = '8.8.8.8', port: int = 53, timeout: int = 3, force_update: bool = False):
+def internet_available(
+    host: str = "8.8.8.8", port: int = 53, timeout: int = 3, force_update: bool = False
+):
     """
     Check if the internet connection is available.
 
