@@ -10,7 +10,7 @@ import iblrig.raw_data_loaders
 from ibllib.io import session_params
 from iblrig.test.base import TASK_KWARGS
 from iblrig.transfer_experiments import BehaviorCopier, EphysCopier, VideoCopier
-from iblrig_tasks._iblrig_tasks_trainingChoiceWorld.task import Session
+from tasks._iblrig_tasks_trainingChoiceWorld.task import Session
 
 
 def _create_behavior_session(temp_dir, ntrials=None, hard_crash=False):

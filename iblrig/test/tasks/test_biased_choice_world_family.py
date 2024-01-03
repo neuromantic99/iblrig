@@ -6,10 +6,10 @@ import pandas as pd
 
 from iblrig.raw_data_loaders import load_task_jsonable
 from iblrig.test.base import (
-    PATH_FIXTURES,
-    TASK_KWARGS,
-    BaseTestCases,
-    IntegrationFullRuns,
+    Ptasks,
+    Ttasks
+    Btasks,
+    ItasksllRuns,
 )
 from iblrig_tasks._iblrig_tasks_biasedChoiceWorld.task import (
     Session as BiasedChoiceWorldSession,

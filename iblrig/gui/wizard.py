@@ -18,7 +18,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QThread, QThreadPool
 from PyQt5.QtWidgets import QStyle
 
-import iblrig_tasks
+import tasks
 from one.api import ONE
 
 try:
@@ -101,7 +101,7 @@ class RigWizardModel:
     subject_details_worker = None
     subject_details: tuple | None = None
 
-    def __post_init__(self):
+    def __post_init__(self):tasks
         self.iblrig_settings = load_settings_yaml("iblrig_settings.yaml")
         self.hardware_settings = load_settings_yaml("hardware_settings.yaml")
         self.all_users = (
