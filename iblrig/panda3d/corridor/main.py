@@ -4,7 +4,7 @@ from panda3d.core import KeyboardButton, TextureStage
 
 
 class Corridor(ShowBase):
-    def __init__(self):
+    def __init__(self) -> None:
         ShowBase.__init__(self)
         base.disableMouse()
 
@@ -19,9 +19,17 @@ class Corridor(ShowBase):
     def corridor(self):
         return self.get_corridor()
 
+    def start(self):
+        if not self.win:
+            self.openMainWindow()
+
+    def step(self):
+        self.taskMgr.step()
+
     def moveCameraTask(self, task):
         speed = 10
         dt = globalClock.getDt()  # Get the actual delta time
+        print(self.camera.getPos())
 
         if self.mouseWatcherNode.is_button_down(KeyboardButton.up()):
             self.camera.setY(self.camera, speed * dt)

@@ -23,7 +23,8 @@ from pybpod_rotaryencoder_module.module_api import RotaryEncoderModule
 from pybpodapi.bpod.bpod_io import BpodIO
 
 SOFTCODE = IntEnum(
-    "SOFTCODE", ["STOP_SOUND", "PLAY_TONE", "PLAY_NOISE", "TRIGGER_CAMERA"]
+    "SOFTCODE",
+    ["STOP_SOUND", "PLAY_TONE", "PLAY_NOISE", "TRIGGER_CAMERA", "TRIGGER_PANDA"],
 )
 
 log = setup_logger("iblrig")
@@ -249,6 +250,8 @@ class Bpod(BpodIO):
 class MyRotaryEncoder:
     def __init__(self, all_thresholds, gain, com, connect=False):
         self.RE_PORT = com
+        self.connected = False
+        # Change me
         self.WHEEL_PERIM = 31 * 2 * np.pi  # = 194,778744523
         self.deg_mm = 360 / self.WHEEL_PERIM
         self.mm_deg = self.WHEEL_PERIM / 360
@@ -271,12 +274,23 @@ class MyRotaryEncoder:
     def connect(self):
         if self.RE_PORT == "COM#":
             return
-        m = RotaryEncoderModule(self.RE_PORT)
-        m.set_zero_position()  # Not necessarily needed
-        m.set_thresholds(self.SET_THRESHOLDS)
-        m.enable_thresholds(self.ENABLE_THRESHOLDS)
-        m.enable_evt_transmission()
-        m.close()
+        self.rotary_encoder = RotaryEncoderModule(self.RE_PORT)
+        self.rotary_encoder.set_zero_position()  # Not necessarily needed
+        self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
+        self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
+        self.rotary_encoder.enable_evt_transmission()
+        self.rotary_encoder.close()
+        self.connected = True
+
+    def get_position(self) -> float | None:
+        if not self.connected:
+            return None
+        return self.rotary_encoder.current_position()
+
+    def set_position(self) -> float | None:
+        if not self.connected:
+            return None
+        return self.rotary_encoder.set_position()
 
 
 def sound_device_factory(output="sysdefault", samplerate=None):

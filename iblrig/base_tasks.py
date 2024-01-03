@@ -482,18 +482,18 @@ class BaseSession(ABC):
                 nullable=False,
             )
 
-        def sigint_handler(*args, **kwargs):
-            # create a signal handler for a graceful exit: create a stop flag in the session folder
-            self.paths.SESSION_FOLDER.joinpath(".stop").touch()
-            self.logger.critical(
-                "SIGINT signal detected, will exit at the end of the trial"
-            )
+        # def sigint_handler(*args, **kwargs):
+        #     # create a signal handler for a graceful exit: create a stop flag in the session folder
+        #     self.paths.SESSION_FOLDER.joinpath(".stop").touch()
+        #     self.logger.critical(
+        #         "SIGINT signal detected, will exit at the end of the trial"
+        #     )
 
         # if upon starting there is a flag just remove it, this is to prevent killing a session in the egg
         if self.paths.SESSION_FOLDER.joinpath(".stop").exists():
             self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
 
-        signal.signal(signal.SIGINT, sigint_handler)
+        # signal.signal(signal.SIGINT, sigint_handler)
         self._run()  # runs the specific task logic ie. trial loop etc...
         # post task instructions
         self.logger.critical("Graceful exit")
@@ -782,6 +782,9 @@ class BpodMixin:
     def stop_mixin_bpod(self):
         self.bpod.close()
 
+    def inject_corridor(self, corridor):
+        self.corridor = corridor
+
     def start_mixin_bpod(self):
         if self.hardware_settings["device_bpod"]["COM_BPOD"] is None:
             raise ValueError(
@@ -811,6 +814,8 @@ class BpodMixin:
                 )
             elif code == SOFTCODE.TRIGGER_CAMERA:
                 self.trigger_bonsai_cameras()
+            elif code == SOFTCODE.TRIGGER_PANDA:
+                self.corridor.step()
 
         self.bpod.softcode_handler_function = softcode_handler
 
@@ -819,12 +824,13 @@ class BpodMixin:
         self.logger.info("Bpod hardware module loaded: OK")
 
     def send_spacers(self):
-        self.logger.info("Starting task by sending a spacer signal on BNC1")
-        sma = StateMachine(self.bpod)
-        Spacer().add_spacer_states(sma, next_state="exit")
-        self.bpod.send_state_machine(sma)
-        self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
-        return self.bpod.session.current_trial.export()
+        pass
+        # self.logger.info("Starting task by sending a spacer signal on BNC1")
+        # sma = StateMachine(self.bpod)
+        # Spacer().add_spacer_states(sma, next_state="exit")
+        # self.bpod.send_state_machine(sma)
+        # self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
+        # return self.bpod.session.current_trial.export()
 
 
 class Frame2TTLMixin:
@@ -1048,21 +1054,22 @@ class SoundMixin:
     def _sound_play(
         self, state_timer=None, output_actions=None, state_name="play_sound"
     ):
-        """
-        Plays a sound using bpod state machine - the sound must be defined in the init_mixin_sound method
-        """
-        assert state_timer is not None, "state_timer must be defined"
-        assert output_actions is not None, "output_actions must be defined"
-        sma = StateMachine(self.bpod)
-        sma.add_state(
-            state_name=state_name,
-            state_timer=state_timer,
-            output_actions=[self.bpod.actions.play_tone],
-            state_change_conditions={"BNC2Low": "exit", "Tup": "exit"},
-        )
-        self.bpod.send_state_machine(sma)
-        self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
-        return self.bpod.session.current_trial.export()
+        pass
+        # """
+        # Plays a sound using bpod state machine - the sound must be defined in the init_mixin_sound method
+        # """
+        # assert state_timer is not None, "state_timer must be defined"
+        # assert output_actions is not None, "output_actions must be defined"
+        # sma = StateMachine(self.bpod)
+        # sma.add_state(
+        #     state_name=state_name,
+        #     state_timer=state_timer,
+        #     output_actions=[self.bpod.actions.play_tone],
+        #     state_change_conditions={"BNC2Low": "exit", "Tup": "exit"},
+        # )
+        # self.bpod.send_state_machine(sma)
+        # self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
+        # return self.bpod.session.current_trial.export()
 
 
 class SpontaneousSession(BaseSession):
