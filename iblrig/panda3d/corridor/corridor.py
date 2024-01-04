@@ -1,7 +1,8 @@
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
-from panda3d.core import KeyboardButton, TextureStage
+from panda3d.core import KeyboardButton, TextureStage, WindowProperties
 
+import builtins
 
 START_POSITION = -40
 END_POSITION = 59
@@ -13,13 +14,35 @@ NUM_TURNS_PER_LAP = 2
 class Corridor(ShowBase):
     def __init__(self) -> None:
         ShowBase.__init__(self)
+        # Panda3d has this janky logic where it pollutes the global namespace.
+        # This helps pylance to not complain about it
+        # probably remove in production
+        base = builtins.base
+
         base.disableMouse()
 
-        # Start of the corridor
-        self.camera.setPos(0, START_POSITION, 0)
-        self.camera.lookAt(self.corridor)
+        props = WindowProperties()
+        props.setSize(800, 600)
 
-        # Set up movement task
+        self.build_corridor()
+
+        self.left_window = self.openWindow(props, makeCamera=0)
+        self.right_window = self.openWindow(props, makeCamera=0)
+
+        self.camera_left = self.makeCamera(self.left_window)
+        self.camera_right = self.makeCamera(self.right_window)
+
+        # Yolks the cameras together
+        self.camera_left.reparentTo(self.camera)
+        self.camera_right.reparentTo(self.camera)
+
+        self.camera.setPos(0, START_POSITION, 0)
+        self.camera.lookAt(0, END_POSITION, 0)
+
+        # Currently set to 30 degrees because corridor needs to be widened
+        self.camera_left.setHpr(30, 0, 0)
+        self.camera_right.setHpr(-30, 0, 0)
+
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
     def start(self):
@@ -49,8 +72,7 @@ class Corridor(ShowBase):
 
         return Task.cont
 
-    @property
-    def corridor(self):
+    def build_corridor(self):
         textures = ["checkers.jpg", "floor.jpg", "checkers.jpg", "horGrat.jpg"]
 
         for i in range(4):
@@ -68,8 +90,6 @@ class Corridor(ShowBase):
 
             model.setTexScale(TextureStage.getDefault(), 100, 10)
             model.setTwoSided(True)
-        # TODO: returns one side
-        return model
 
 
 if __name__ == "__main__":
