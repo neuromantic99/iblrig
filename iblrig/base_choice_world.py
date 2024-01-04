@@ -300,7 +300,7 @@ class ChoiceWorldSession(
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 20)
+        sma.set_global_timer(1, 60)
         sma.add_state(
             state_name="start",
             state_timer=0,

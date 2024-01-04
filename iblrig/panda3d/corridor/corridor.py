@@ -3,7 +3,11 @@ from direct.task import Task
 from panda3d.core import KeyboardButton, TextureStage
 
 
-START_POSITION = -40  # roughly the start of the corridor
+START_POSITION = -40
+END_POSITION = 59
+CORRIDOR_LENGTH = END_POSITION - START_POSITION
+
+NUM_TURNS_PER_LAP = 2
 
 
 class Corridor(ShowBase):
@@ -22,8 +26,14 @@ class Corridor(ShowBase):
         if not self.win:
             self.openMainWindow()
 
-    def set_camera_position(self, rotary_encoder_position: int):
-        self.camera.setPos(0, rotary_encoder_position - START_POSITION, 0)
+    def set_camera_position(self, fraction_through_turn: float):
+        """Set camera position based on the number of
+        full wheel rotations required to complete the corridor
+        TODO: This logic might be slightly odd because it completely ignores
+        the perimeter of the wheel
+        """
+        distance = fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP
+        self.camera.setPos(0, distance + START_POSITION, 0)
 
     def step(self):
         self.taskMgr.step()

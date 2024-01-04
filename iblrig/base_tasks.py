@@ -816,7 +816,7 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 self.device_rotary_encoder.update_position()
-                self.corridor.set_camera_position(self.device_rotary_encoder.position)
+                self.corridor.set_camera_position(self.device_rotary_encoder.position / self.device_rotary_encoder.WHEEL_PERIM)
                 self.corridor.step()
 
         self.bpod.softcode_handler_function = softcode_handler
