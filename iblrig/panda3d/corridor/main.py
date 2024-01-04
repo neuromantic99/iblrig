@@ -3,25 +3,27 @@ from direct.task import Task
 from panda3d.core import KeyboardButton, TextureStage
 
 
+START_POSITION = -40  # roughly the start of the corridor
+
+
 class Corridor(ShowBase):
     def __init__(self) -> None:
         ShowBase.__init__(self)
         base.disableMouse()
 
-        # Place the camera inside the cuboid
-        self.camera.setPos(0, -5, 0)
+        # Start of the corridor
+        self.camera.setPos(0, START_POSITION, 0)
         self.camera.lookAt(self.corridor)
 
         # Set up movement task
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
-    @property
-    def corridor(self):
-        return self.get_corridor()
-
     def start(self):
         if not self.win:
             self.openMainWindow()
+
+    def set_camera_position(self, rotary_encoder_position: int):
+        self.camera.setPos(0, rotary_encoder_position - START_POSITION, 0)
 
     def step(self):
         self.taskMgr.step()
@@ -29,7 +31,6 @@ class Corridor(ShowBase):
     def moveCameraTask(self, task):
         speed = 10
         dt = globalClock.getDt()  # Get the actual delta time
-        print(self.camera.getPos())
 
         if self.mouseWatcherNode.is_button_down(KeyboardButton.up()):
             self.camera.setY(self.camera, speed * dt)
@@ -38,7 +39,8 @@ class Corridor(ShowBase):
 
         return Task.cont
 
-    def get_corridor(self):
+    @property
+    def corridor(self):
         textures = ["checkers.jpg", "floor.jpg", "checkers.jpg", "horGrat.jpg"]
 
         for i in range(4):
@@ -48,7 +50,6 @@ class Corridor(ShowBase):
             model = self.loader.loadModel(
                 f"/Users/jamesrowland/Code/iblrig/iblrig/panda3d/corridor/models/side{i+1}.obj"
             )
-            # model = self.loader.loadModel(f"iblrig/panda3d/corridor/models/side{i+1}.obj")
 
             model.setTexture(texture, 1)
             model.reparentTo(self.render)

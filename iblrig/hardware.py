@@ -256,6 +256,10 @@ class MyRotaryEncoder:
         self.deg_mm = 360 / self.WHEEL_PERIM
         self.mm_deg = self.WHEEL_PERIM / 360
         self.factor = 1 / (self.mm_deg * gain)
+
+        self.position = 0
+        self.previous_angle = 0
+
         self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
         self.ENABLE_THRESHOLDS = [(x != 0) for x in self.SET_THRESHOLDS]
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
@@ -279,18 +283,26 @@ class MyRotaryEncoder:
         self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
         self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
         self.rotary_encoder.enable_evt_transmission()
-        self.rotary_encoder.close()
         self.connected = True
 
-    def get_position(self) -> float | None:
+    def get_angle(self) -> float | None:
         if not self.connected:
             return None
         return self.rotary_encoder.current_position()
 
-    def set_position(self) -> float | None:
-        if not self.connected:
-            return None
-        return self.rotary_encoder.set_position()
+    @staticmethod
+    def angle_change(angle1: float, angle2: float) -> float:
+        """Angle is from -180 to 180 degrees. Deals with the angle jump from 180 to -180."""
+        return (angle2 - angle1 + 180) % 360 - 180
+
+    def update_position(self) -> float:
+        """Returns the position in mm. Could get into trouble if the wheel is rotated more than 180 degrees between two calls."""
+        angle = self.get_angle()
+        self.position = (
+            self.position
+            + self.angle_change(angle, self.previous_angle) / 360 * self.WHEEL_PERIM
+        )
+        self.previous_angle = angle
 
 
 def sound_device_factory(output="sysdefault", samplerate=None):

@@ -28,6 +28,7 @@ class Session(ChoiceWorldSession):
     def start_bpod(self):
         self.corridor.start()
         self.corridor.step()
+        self.device_rotary_encoder.connect()
         self.run()
 
 

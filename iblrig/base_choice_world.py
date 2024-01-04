@@ -311,14 +311,13 @@ class ChoiceWorldSession(
             state_name="call_panda",
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
-            # state_change_conditions={"Tup": "transition"},
             state_change_conditions={"Tup": "transition", "GlobalTimer1_End": "exit"},
         )  # stop all sounds
 
         # # Dummy state because i can't seem to trigger a state from itself
         sma.add_state(
             state_name="transition",
-            state_timer=0,
+            state_timer=1 / 60,
             state_change_conditions={"GlobalTimer1_End": "exit", "Tup": "call_panda"},
         )
 
