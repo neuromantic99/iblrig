@@ -8,7 +8,7 @@ sys.path.append(str(parent))
 import yaml
 
 from iblrig.base_choice_world import ChoiceWorldSession
-from iblrig.panda3d.corridor.main import Corridor
+from iblrig.panda3d.corridor.corridor import Corridor
 
 # read defaults from task_parameters.yaml
 with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:

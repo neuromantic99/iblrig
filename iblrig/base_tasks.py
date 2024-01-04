@@ -37,7 +37,7 @@ from iblutil.util import Bunch, setup_logger
 from one.api import ONE
 from pybpodapi.protocol import StateMachine
 
-from iblrig.panda3d.corridor.main import Corridor
+from iblrig.panda3d.corridor.corridor import Corridor
 
 
 # if HAS_PYSPIN:
