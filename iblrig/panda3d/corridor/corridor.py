@@ -1,14 +1,22 @@
-from direct.showbase.ShowBase import ShowBase
-from direct.task import Task
-from panda3d.core import KeyboardButton, TextureStage, WindowProperties
-
 import builtins
 
-START_POSITION = -40
-END_POSITION = 59
-CORRIDOR_LENGTH = END_POSITION - START_POSITION
+from direct.showbase.ShowBase import ShowBase
+from direct.task import Task
+from panda3d.core import (
+    CardMaker,
+    KeyboardButton,
+    WindowProperties,
+)
 
 NUM_TURNS_PER_LAP = 2
+
+CORRIDOR_LENGTH = 200
+CORRIDOR_WIDTH = 40
+CORRIDOR_HEIGHT = 10
+
+CAMERA_HEIGHT = 5
+# +1 so that the camera is not half out of the back wall
+CAMERA_START_Y = -CORRIDOR_LENGTH / 2 + 1
 
 
 class Corridor(ShowBase):
@@ -36,12 +44,11 @@ class Corridor(ShowBase):
         self.camera_left.reparentTo(self.camera)
         self.camera_right.reparentTo(self.camera)
 
-        self.camera.setPos(0, START_POSITION, 0)
-        self.camera.lookAt(0, END_POSITION, 0)
+        self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
+        self.camera.lookAt(0, CORRIDOR_LENGTH, CAMERA_HEIGHT)
 
-        # Currently set to 30 degrees because corridor needs to be widened
-        self.camera_left.setHpr(30, 0, 0)
-        self.camera_right.setHpr(-30, 0, 0)
+        self.camera_left.setHpr(90, 0, 0)
+        self.camera_right.setHpr(-90, 0, 0)
 
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
@@ -56,7 +63,7 @@ class Corridor(ShowBase):
         the perimeter of the wheel
         """
         distance = fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP
-        self.camera.setPos(0, distance + START_POSITION, 0)
+        self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
 
     def step(self):
         self.taskMgr.step()
@@ -73,23 +80,72 @@ class Corridor(ShowBase):
         return Task.cont
 
     def build_corridor(self):
+        cm = CardMaker("corridor_segment")
         textures = ["checkers.jpg", "floor.jpg", "checkers.jpg", "horGrat.jpg"]
 
-        for i in range(4):
+        # Top and bottom
+        cm.setFrame(
+            -CORRIDOR_WIDTH / 2,
+            CORRIDOR_WIDTH / 2,
+            -CORRIDOR_LENGTH / 2,
+            CORRIDOR_LENGTH / 2,
+        )
+        floor = self.render.attachNewNode(cm.generate())
+        floor.setPos(0, 0, 0)
+        floor.setP(-90)
+        floor.setTwoSided(True)
+
+        ceiling = self.render.attachNewNode(cm.generate())
+        ceiling.setPos(0, 0, CORRIDOR_HEIGHT)
+        ceiling.setP(-90)
+        ceiling.setTwoSided(True)
+
+        # Side Walls
+        cm.setFrame(
+            -CORRIDOR_LENGTH / 2,
+            CORRIDOR_LENGTH / 2,
+            -CORRIDOR_HEIGHT / 2,
+            CORRIDOR_HEIGHT / 2,
+        )
+
+        left_wall = self.render.attachNewNode(cm.generate())
+        left_wall.setPos(-CORRIDOR_WIDTH / 2, 0, CORRIDOR_HEIGHT / 2)
+        left_wall.setH(90)
+        left_wall.setTwoSided(True)
+
+        right_wall = self.render.attachNewNode(cm.generate())
+        right_wall.setPos(CORRIDOR_WIDTH / 2, 0, CORRIDOR_HEIGHT / 2)
+        right_wall.setH(-90)
+        right_wall.setTwoSided(True)
+
+        # Front and back
+        cm.setFrame(
+            -CORRIDOR_WIDTH / 2,
+            CORRIDOR_WIDTH / 2,
+            -CORRIDOR_HEIGHT / 2,
+            CORRIDOR_HEIGHT / 2,
+        )
+
+        front_wall = self.render.attachNewNode(cm.generate())
+        front_wall.setPos(0, CORRIDOR_LENGTH / 2, CORRIDOR_HEIGHT / 2)
+        front_wall.setH(180)
+        front_wall.setTwoSided(True)
+
+        back_wall = self.render.attachNewNode(cm.generate())
+        back_wall.setPos(0, -CORRIDOR_LENGTH / 2, CORRIDOR_HEIGHT / 2)
+        back_wall.setTwoSided(True)
+
+        for idx, model in enumerate(
+            [ceiling, floor, left_wall, right_wall, front_wall, back_wall]
+        ):
             texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{textures[i]}"
-            )
-            model = self.loader.loadModel(
-                f"/Users/jamesrowland/Code/iblrig/iblrig/panda3d/corridor/models/side{i+1}.obj"
+                f"iblrig/panda3d/corridor/textures/{textures[idx % 4]}"
             )
 
             model.setTexture(texture, 1)
             model.reparentTo(self.render)
-            model.setPos(0, 10, 0)
-            model.setH(model, 90)
 
-            model.setTexScale(TextureStage.getDefault(), 100, 10)
-            model.setTwoSided(True)
+            # model.setTexScale(TextureStage.getDefault(), 100, 10)
 
 
 if __name__ == "__main__":
