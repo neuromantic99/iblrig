@@ -12,7 +12,7 @@ from panda3d.core import (
 
 NUM_TURNS_PER_LAP = 2
 
-CORRIDOR_LENGTH = 200
+CORRIDOR_LENGTH = 1000
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
 
@@ -141,15 +141,8 @@ class Corridor(ShowBase):
         # )
 
         for model_name, model in corridor.items():
-            texture_name = (
-                "floor.jpg"
-                if model_name == "floor"
-                else wall_texture
-                if model_name in ["left_wall", "right_wall"]
-                else "checkers.jpg"
-            )
             texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{texture_name}"
+                f"iblrig/panda3d/corridor/textures/{'endOfCorridor.png' if model_name == 'back_wall' else wall_texture}"
             )
 
             model.setTexture(texture, 1)
