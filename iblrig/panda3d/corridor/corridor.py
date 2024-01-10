@@ -16,9 +16,9 @@ CORRIDOR_LENGTH = 1000
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
 
-CAMERA_HEIGHT = 5
-# +1 so that the camera is not half out of the back wall
-CAMERA_START_Y = -CORRIDOR_LENGTH / 2 + 1
+CAMERA_HEIGHT = 10
+# +5 so that the camera is not half out of the back wall
+CAMERA_START_Y = -CORRIDOR_LENGTH / 2 + 5
 
 
 class Corridor(ShowBase):
@@ -142,7 +142,7 @@ class Corridor(ShowBase):
 
         for model_name, model in corridor.items():
             texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{'endOfCorridor.png' if model_name == 'back_wall' else wall_texture}"
+                f"iblrig/panda3d/corridor/textures/{'endOfCorridor.png' if model_name in ['back_wall', 'floor', 'ceiling'] else wall_texture}"
             )
 
             model.setTexture(texture, 1)

@@ -24,7 +24,15 @@ from pybpodapi.bpod.bpod_io import BpodIO
 
 SOFTCODE = IntEnum(
     "SOFTCODE",
-    ["STOP_SOUND", "PLAY_TONE", "PLAY_NOISE", "TRIGGER_CAMERA", "TRIGGER_PANDA"],
+    [
+        "STOP_SOUND",
+        "PLAY_TONE",
+        "PLAY_NOISE",
+        "TRIGGER_CAMERA",
+        "TRIGGER_PANDA",
+        "LEFT_MOVEMENT",
+        "RIGHT_MOVEMENT",
+    ],
 )
 
 log = setup_logger("iblrig")
@@ -255,13 +263,14 @@ class MyRotaryEncoder:
         self.WHEEL_PERIM = 31 * 2 * np.pi  # = 194,778744523
         self.deg_mm = 360 / self.WHEEL_PERIM
         self.mm_deg = self.WHEEL_PERIM / 360
-        self.factor = 1 / (self.mm_deg * gain)
+        self.factor = 1
 
         self.position = 0
         self.previous_angle = 0
 
-        self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
-        self.ENABLE_THRESHOLDS = [(x != 0) for x in self.SET_THRESHOLDS]
+        self.SET_THRESHOLDS = [0, 0, 0.5, 1, 50, -1, -10]
+        # self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
+        self.ENABLE_THRESHOLDS = [True] * len(self.SET_THRESHOLDS)
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
         while len(self.ENABLE_THRESHOLDS) < 8:
             self.ENABLE_THRESHOLDS.append(False)
@@ -284,6 +293,7 @@ class MyRotaryEncoder:
         self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
         self.rotary_encoder.enable_evt_transmission()
         self.connected = True
+        # self.rotary_encoder.set_wrappoint(1)
 
     def get_angle(self) -> float | None:
         if not self.connected:
@@ -295,9 +305,12 @@ class MyRotaryEncoder:
         """Angle is from -180 to 180 degrees. Deals with the angle jump from 180 to -180."""
         return (angle2 - angle1 + 180) % 360 - 180
 
-    def update_position(self) -> float:
+    def update_position(self) -> None:
         """Returns the position in mm. Could get into trouble if the wheel is rotated more than 180 degrees between two calls."""
         angle = self.get_angle()
+        print(f"Angle: {angle}")
+        if angle is None:
+            return
         self.position = (
             self.position
             + self.angle_change(angle, self.previous_angle) / 360 * self.WHEEL_PERIM

@@ -96,15 +96,12 @@ class ChoiceWorldSession(
     )
 
     def __init__(self, subject: str, delay_secs: int = 0):
+        # super().__init__(subject=subject, log_level="DEBUG")
         super().__init__(subject=subject)
         self.task_params["SESSION_DELAY_START"] = delay_secs
         # init behaviour data
-        self.movement_left = self.device_rotary_encoder.THRESHOLD_EVENTS[
-            self.task_params.QUIESCENCE_THRESHOLDS[0]
-        ]
-        self.movement_right = self.device_rotary_encoder.THRESHOLD_EVENTS[
-            self.task_params.QUIESCENCE_THRESHOLDS[1]
-        ]
+        self.movement_left = self.device_rotary_encoder.THRESHOLD_EVENTS[-35]
+        self.movement_right = self.device_rotary_encoder.THRESHOLD_EVENTS[35]
         # init counter variables
         self.trial_num = -1
         self.block_num = -1
@@ -301,10 +298,13 @@ class ChoiceWorldSession(
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
         sma.set_global_timer(1, 60)
+
+        sma.set_global_timer
+
         sma.add_state(
             state_name="start",
             state_timer=0,
-            state_change_conditions={"Tup": "call_panda"},
+            state_change_conditions={"Tup": "transition"},
             output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
         )
         sma.add_state(
@@ -312,13 +312,38 @@ class ChoiceWorldSession(
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
             state_change_conditions={"Tup": "transition", "GlobalTimer1_End": "exit"},
+        )
+
+        sma.add_state(
+            state_name="left_movement",
+            state_timer=2,
+            output_actions=[("SoftCode", SOFTCODE.LEFT_MOVEMENT)],
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="right_movement",
+            state_timer=2,
+            output_actions=[("SoftCode", SOFTCODE.RIGHT_MOVEMENT)],
+            state_change_conditions={"Tup": "transition"},
         )  # stop all sounds
 
         # # Dummy state because i can't seem to trigger a state from itself
         sma.add_state(
             state_name="transition",
             state_timer=1 / 60,
-            state_change_conditions={"GlobalTimer1_End": "exit", "Tup": "call_panda"},
+            state_change_conditions={
+                "RotaryEncoder1_1": "left_movement",
+                "RotaryEncoder1_2": "left_movement",
+                "RotaryEncoder1_3": "left_movement",
+                "RotaryEncoder1_4": "left_movement",
+                "RotaryEncoder1_5": "left_movement",
+                "RotaryEncoder1_6": "left_movement",
+                "RotaryEncoder1_7": "left_movement",
+                "GlobalTimer1_End": "exit",
+                "Tup": "call_panda",
+                # self.movement_right: "right_movement",
+            },
         )
 
         # stop all sounds
@@ -602,13 +627,13 @@ TIME FROM START:      {self.time_elapsed}
     """
 
     @property
-    def reward_time(self):
+    def reward_time(self) -> float:
         return self.compute_reward_time(
             amount_ul=self.trials_table.at[self.trial_num, "reward_amount"]
         )
 
     @property
-    def quiescent_period(self):
+    def quiescent_period(self) -> float:
         return self.trials_table.at[self.trial_num, "quiescent_period"]
 
     @property
