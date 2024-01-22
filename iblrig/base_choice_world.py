@@ -100,8 +100,8 @@ class ChoiceWorldSession(
         super().__init__(subject=subject)
         self.task_params["SESSION_DELAY_START"] = delay_secs
         # init behaviour data
-        self.movement_left = self.device_rotary_encoder.THRESHOLD_EVENTS[-35]
-        self.movement_right = self.device_rotary_encoder.THRESHOLD_EVENTS[35]
+        # self.movement_left = self.device_rotary_encoder.THRESHOLD_EVENTS[-35]
+        # self.movement_right = self.device_rotary_encoder.THRESHOLD_EVENTS[35]
         # init counter variables
         self.trial_num = -1
         self.block_num = -1
@@ -297,9 +297,7 @@ class ChoiceWorldSession(
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 60)
-
-        sma.set_global_timer
+        sma.set_global_timer(1, 10)
 
         sma.add_state(
             state_name="start",
@@ -315,31 +313,18 @@ class ChoiceWorldSession(
         )
 
         sma.add_state(
-            state_name="left_movement",
-            state_timer=2,
-            output_actions=[("SoftCode", SOFTCODE.LEFT_MOVEMENT)],
-            state_change_conditions={"Tup": "transition"},
+            state_name="reward",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.REWARD)],
+            state_change_conditions={"Tup": "exit"},
         )
-
-        sma.add_state(
-            state_name="right_movement",
-            state_timer=2,
-            output_actions=[("SoftCode", SOFTCODE.RIGHT_MOVEMENT)],
-            state_change_conditions={"Tup": "transition"},
-        )  # stop all sounds
 
         # # Dummy state because i can't seem to trigger a state from itself
         sma.add_state(
             state_name="transition",
             state_timer=1 / 60,
             state_change_conditions={
-                "RotaryEncoder1_1": "left_movement",
-                "RotaryEncoder1_2": "left_movement",
-                "RotaryEncoder1_3": "left_movement",
-                "RotaryEncoder1_4": "left_movement",
-                "RotaryEncoder1_5": "left_movement",
-                "RotaryEncoder1_6": "left_movement",
-                "RotaryEncoder1_7": "left_movement",
+                "RotaryEncoder1_1": "reward",
                 "GlobalTimer1_End": "exit",
                 "Tup": "call_panda",
                 # self.movement_right: "right_movement",

@@ -482,18 +482,18 @@ class BaseSession(ABC):
                 nullable=False,
             )
 
-        # def sigint_handler(*args, **kwargs):
-        #     # create a signal handler for a graceful exit: create a stop flag in the session folder
-        #     self.paths.SESSION_FOLDER.joinpath(".stop").touch()
-        #     self.logger.critical(
-        #         "SIGINT signal detected, will exit at the end of the trial"
-        #     )
+        def sigint_handler(*args, **kwargs):
+            # create a signal handler for a graceful exit: create a stop flag in the session folder
+            self.paths.SESSION_FOLDER.joinpath(".stop").touch()
+            self.logger.critical(
+                "SIGINT signal detected, will exit at the end of the trial"
+            )
 
         # if upon starting there is a flag just remove it, this is to prevent killing a session in the egg
         if self.paths.SESSION_FOLDER.joinpath(".stop").exists():
             self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
 
-        # signal.signal(signal.SIGINT, sigint_handler)
+        signal.signal(signal.SIGINT, sigint_handler)
         self._run()  # runs the specific task logic ie. trial loop etc...
         # post task instructions
         self.logger.critical("Graceful exit")
@@ -796,7 +796,6 @@ class BpodMixin:
             self.hardware_settings["device_bpod"]["COM_BPOD"],
             # disable_behavior_ports=[1, 2, 3],
         )
-        self.bpod.define_rotary_encoder_actions()
         self.bpod.set_status_led(False)
 
         def softcode_handler(code):
@@ -815,22 +814,23 @@ class BpodMixin:
             elif code == SOFTCODE.TRIGGER_CAMERA:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
+                self.device_rotary_encoder.increment_position()
+                print(
+                    f"Angle {self.device_rotary_encoder.rotary_encoder.current_position()}"
+                )
                 self.device_rotary_encoder.update_position()
                 self.corridor.set_camera_position(
                     self.device_rotary_encoder.position
                     / self.device_rotary_encoder.WHEEL_PERIM
                 )
                 self.corridor.step()
-            elif code == SOFTCODE.LEFT_MOVEMENT:
-                print("LEFTYYYYYYY")
-                print(self.device_rotary_encoder.position)
-                print("\n\n\n")
-            elif code == SOFTCODE.RIGHT_MOVEMENT:
-                print("RIGHTYY")
+            elif code == SOFTCODE.REWARD:
+                print(
+                    f"Reward triggered at position: {self.device_rotary_encoder.rotary_encoder.current_position()}"
+                )
 
         self.bpod.softcode_handler_function = softcode_handler
 
-        assert len(self.bpod.actions.keys()) == 6
         assert self.bpod.is_connected
         self.logger.info("Bpod hardware module loaded: OK")
 

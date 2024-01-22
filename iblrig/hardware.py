@@ -30,8 +30,7 @@ SOFTCODE = IntEnum(
         "PLAY_NOISE",
         "TRIGGER_CAMERA",
         "TRIGGER_PANDA",
-        "LEFT_MOVEMENT",
-        "RIGHT_MOVEMENT",
+        "REWARD",
     ],
 )
 
@@ -268,9 +267,9 @@ class MyRotaryEncoder:
         self.position = 0
         self.previous_angle = 0
 
-        self.SET_THRESHOLDS = [0, 0, 0.5, 1, 50, -1, -10]
-        # self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
-        self.ENABLE_THRESHOLDS = [True] * len(self.SET_THRESHOLDS)
+        all_thresholds = [200]
+        self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
+        self.ENABLE_THRESHOLDS = [True] * len(all_thresholds)
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
         while len(self.ENABLE_THRESHOLDS) < 8:
             self.ENABLE_THRESHOLDS.append(False)
@@ -284,16 +283,23 @@ class MyRotaryEncoder:
         if connect:
             self.connect()
 
+    def set_position(self, degrees: float):
+        ticks = self.rotary_encoder._RotaryEncoderModule__degrees_2_pos(degrees)
+        self.rotary_encoder.set_position(degrees)
+
+    def increment_position(self):
+        self.set_position(self.get_angle() + 10)
+
     def connect(self):
         if self.RE_PORT == "COM#":
             return
         self.rotary_encoder = RotaryEncoderModule(self.RE_PORT)
-        self.rotary_encoder.set_zero_position()  # Not necessarily needed
+        self.rotary_encoder.set_position(0)
+        self.rotary_encoder.set_zero_position()
+        self.rotary_encoder.enable_evt_transmission()
         self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
         self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
-        self.rotary_encoder.enable_evt_transmission()
         self.connected = True
-        # self.rotary_encoder.set_wrappoint(1)
 
     def get_angle(self) -> float | None:
         if not self.connected:

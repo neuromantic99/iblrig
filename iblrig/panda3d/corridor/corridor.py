@@ -65,7 +65,9 @@ class Corridor(ShowBase):
         TODO: This logic might be slightly odd because it completely ignores
         the perimeter of the wheel
         """
-        distance = fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP
+        distance = (
+            fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP * -1
+        )  # Negative angle is forwards in the world
         self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
 
     def step(self) -> None:
@@ -141,8 +143,15 @@ class Corridor(ShowBase):
         # )
 
         for model_name, model in corridor.items():
+            texture_path = (
+                "floor.jpg"
+                if model_name in ["floor", "ceiling"]
+                else "endOfCorridor.png"
+                if model_name == "back_wall"
+                else wall_texture
+            )
             texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{'endOfCorridor.png' if model_name in ['back_wall', 'floor', 'ceiling'] else wall_texture}"
+                f"iblrig/panda3d/corridor/textures/{texture_path}"
             )
 
             model.setTexture(texture, 1)
