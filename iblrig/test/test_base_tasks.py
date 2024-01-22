@@ -14,7 +14,7 @@ import yaml
 
 import ibllib.io.session_params as ses_params
 from ibllib.io.session_params import read_params
-from iblrig.base_choice_world import BiasedChoiceWorldSession, ChoiceWorldSession
+from tasks.base_choice_world import BiasedChoiceWorldSession, ChoiceWorldSession
 from iblrig.base_tasks import (
     BaseSession,
     BpodMixin,

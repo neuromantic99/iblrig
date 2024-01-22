@@ -796,6 +796,7 @@ class BpodMixin:
             self.hardware_settings["device_bpod"]["COM_BPOD"],
             # disable_behavior_ports=[1, 2, 3],
         )
+        self.bpod.define_rotary_encoder_actions()
         self.bpod.set_status_led(False)
 
         def softcode_handler(code):
@@ -885,9 +886,7 @@ class RotaryEncoderMixin:
 
     def init_mixin_rotary_encoder(self, *args, **kwargs):
         self.device_rotary_encoder = MyRotaryEncoder(
-            all_thresholds=self.task_params.STIM_POSITIONS
-            + self.task_params.QUIESCENCE_THRESHOLDS,
-            gain=self.task_params.STIM_GAIN,
+            gain=1,
             com=self.hardware_settings.device_rotary_encoder["COM_ROTARY_ENCODER"],
             connect=False,
         )
@@ -922,6 +921,8 @@ class ValveMixin:
 
     def start_mixin_valve(self):
         # if the rig is not on manual settings, then the reward valve has to be calibrated to run the experiment
+        # TODO: improve
+        self.task_params.AUTOMATIC_CALIBRATION = False
         assert (
             self.task_params.AUTOMATIC_CALIBRATION is False
             or self.valve["is_calibrated"]
@@ -972,143 +973,3 @@ class ValveMixin:
         self.bpod.send_state_machine(sma)
         self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
         return self.bpod.session.current_trial.export()
-
-
-class SoundMixin:
-    """
-    Sound interface methods for state machine
-    """
-
-    def init_mixin_sound(self):
-        self.sound = Bunch(
-            {
-                "GO_TONE": None,
-                "WHITE_NOISE": None,
-            }
-        )
-        sound_output = self.hardware_settings.device_sound["OUTPUT"]
-        # sound device sd is actually the module soundevice imported above.
-        # not sure how this plays out when referenced outside of this python file
-        (
-            self.sound["sd"],
-            self.sound["samplerate"],
-            self.sound["channels"],
-        ) = sound_device_factory(output=sound_output)
-        # Create sounds and output actions of state machine
-        self.sound["GO_TONE"] = iblrig.sound.make_sound(
-            rate=self.sound["samplerate"],
-            frequency=self.task_params.GO_TONE_FREQUENCY,
-            duration=self.task_params.GO_TONE_DURATION,
-            amplitude=self.task_params.GO_TONE_AMPLITUDE,
-            fade=0.01,
-            chans=self.sound["channels"],
-        )
-
-        self.sound["WHITE_NOISE"] = iblrig.sound.make_sound(
-            rate=self.sound["samplerate"],
-            frequency=-1,
-            duration=self.task_params.WHITE_NOISE_DURATION,
-            amplitude=self.task_params.WHITE_NOISE_AMPLITUDE,
-            fade=0.01,
-            chans=self.sound["channels"],
-        )
-
-    def start_mixin_sound(self):
-        """
-        Depends on bpod mixin start for hard sound card
-        :return:
-        """
-        assert (
-            self.bpod.is_connected
-        ), "The sound mixin depends on the bpod mixin being connected"
-        # SoundCard config params
-        if self.hardware_settings.device_sound["OUTPUT"] == "harp":
-            sound.configure_sound_card(
-                sounds=[self.sound.GO_TONE, self.sound.WHITE_NOISE],
-                indexes=[
-                    self.task_params.GO_TONE_IDX,
-                    self.task_params.WHITE_NOISE_IDX,
-                ],
-                sample_rate=self.sound["samplerate"],
-            )
-            self.bpod.define_harp_sounds_actions(
-                self.task_params.GO_TONE_IDX, self.task_params.WHITE_NOISE_IDX
-            )
-        else:  # xonar or system default
-            self.bpod.define_xonar_sounds_actions()
-        self.logger.info(
-            f"Sound module loaded: OK: {self.hardware_settings.device_sound['OUTPUT']}"
-        )
-
-    def sound_play_noise(self, state_timer=0.510, state_name="play_noise"):
-        """
-        Plays the noise sound for the error feedback using bpod state machine
-        :return: bpod current trial export
-        """
-        return self._sound_play(
-            state_name=state_name,
-            output_actions=[self.bpod.actions.play_tone],
-            state_timer=state_timer,
-        )
-
-    def sound_play_tone(self, state_timer=0.102, state_name="play_tone"):
-        """
-        Plays the ready tone beep using bpod state machine
-        :return: bpod current trial export
-        """
-        return self._sound_play(
-            state_name=state_name,
-            output_actions=[self.bpod.actions.play_tone],
-            state_timer=state_timer,
-        )
-
-    def _sound_play(
-        self, state_timer=None, output_actions=None, state_name="play_sound"
-    ):
-        pass
-        # """
-        # Plays a sound using bpod state machine - the sound must be defined in the init_mixin_sound method
-        # """
-        # assert state_timer is not None, "state_timer must be defined"
-        # assert output_actions is not None, "output_actions must be defined"
-        # sma = StateMachine(self.bpod)
-        # sma.add_state(
-        #     state_name=state_name,
-        #     state_timer=state_timer,
-        #     output_actions=[self.bpod.actions.play_tone],
-        #     state_change_conditions={"BNC2Low": "exit", "Tup": "exit"},
-        # )
-        # self.bpod.send_state_machine(sma)
-        # self.bpod.run_state_machine(sma)  # Locks until state machine 'exit' is reached
-        # return self.bpod.session.current_trial.export()
-
-
-class SpontaneousSession(BaseSession):
-    """
-    A Spontaneous task doesn't have trials, it just runs until the user stops it
-    It is used to get extraction structure for data streams
-    """
-
-    def __init__(self, duration_secs=None, **kwargs):
-        super().__init__(**kwargs)
-        self.duration_secs = duration_secs
-
-    def start_hardware(self):
-        pass  # no mixin here, life is but a dream
-
-    def _run(self):
-        """
-        This is the method that runs the task with the actual state machine
-        :return:
-        """
-        self.logger.info("Starting spontaneous acquisition")
-        while True:
-            time.sleep(1.5)
-            if (
-                self.duration_secs is not None
-                and self.time_elapsed.seconds > self.duration_secs
-            ):
-                break
-            if self.paths.SESSION_FOLDER.joinpath(".stop").exists():
-                self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
-                break

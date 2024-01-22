@@ -4,7 +4,7 @@ Validation script intended to aid in troubleshooting harp soundcard issues
 import logging
 
 from iblrig import path_helper
-from iblrig.base_choice_world import BiasedChoiceWorldSession
+from tasks.base_choice_world import BiasedChoiceWorldSession
 
 log = logging.getLogger("iblrig")
 

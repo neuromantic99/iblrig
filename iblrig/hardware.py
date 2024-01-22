@@ -175,26 +175,6 @@ class Bpod(BpodIO):
                         ],
                     ),
                 ),
-                "bonsai_hide_stim": (
-                    re_port,
-                    self._define_message(self.rotary_encoder, [ord("#"), 1]),
-                ),
-                "bonsai_show_stim": (
-                    re_port,
-                    self._define_message(self.rotary_encoder, [ord("#"), 8]),
-                ),
-                "bonsai_closed_loop": (
-                    re_port,
-                    self._define_message(self.rotary_encoder, [ord("#"), 3]),
-                ),
-                "bonsai_freeze_stim": (
-                    re_port,
-                    self._define_message(self.rotary_encoder, [ord("#"), 4]),
-                ),
-                "bonsai_show_center": (
-                    re_port,
-                    self._define_message(self.rotary_encoder, [ord("#"), 5]),
-                ),
             }
         )
 
@@ -255,7 +235,7 @@ class Bpod(BpodIO):
 
 
 class MyRotaryEncoder:
-    def __init__(self, all_thresholds, gain, com, connect=False):
+    def __init__(self, gain, com, connect=False):
         self.RE_PORT = com
         self.connected = False
         # Change me
