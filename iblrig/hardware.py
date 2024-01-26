@@ -30,7 +30,8 @@ SOFTCODE = IntEnum(
         "PLAY_NOISE",
         "TRIGGER_CAMERA",
         "TRIGGER_PANDA",
-        "REWARD",
+        "ITI",
+        "REWARD_ON",
     ],
 )
 
@@ -95,6 +96,7 @@ class Bpod(BpodIO):
 
     @property
     def rotary_encoder(self):
+        return None
         return self.get_module("rotary_encoder")
 
     @property
@@ -234,6 +236,32 @@ class Bpod(BpodIO):
         )
 
 
+class MyRotaryEncoderMock:
+    WHEEL_PERIM = 5
+
+    def __init__(self, gain, com, connect=False):
+        self.position = 0
+        pass
+
+    def set_position(self, degrees: float):
+        pass
+
+    def increment_position(self):
+        self.position -= 5**-2
+
+    def connect(self):
+        pass
+
+    def reset_position(self):
+        self.position = 0
+
+    def get_angle(self) -> float | None:
+        pass
+
+    def update_position(self) -> None:
+        pass
+
+
 class MyRotaryEncoder:
     def __init__(self, gain, com, connect=False):
         self.RE_PORT = com
@@ -280,6 +308,12 @@ class MyRotaryEncoder:
         self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
         self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
         self.connected = True
+
+    def reset_position(self):
+        # I don't know if both of these are necessary
+        self.rotary_encoder.set_position(0)
+        self.rotary_encoder.set_zero_position()
+        self.position = 0
 
     def get_angle(self) -> float | None:
         if not self.connected:

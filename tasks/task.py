@@ -124,52 +124,6 @@ class IblBase(
                 self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
                 break
 
-    def get_state_machine_trial(self, i):
-        sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 10)
-
-        sma.add_state(
-            state_name="trial_start",
-            state_timer=0,
-            state_change_conditions={"Tup": "reset_rotary_encoder"},
-            output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
-        )
-
-        sma.add_state(
-            state_name="reset_rotary_encoder",
-            state_timer=0,
-            output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "call_panda"},
-        )
-
-        sma.add_state(
-            state_name="call_panda",
-            state_timer=0,
-            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
-            state_change_conditions={"Tup": "transition", "GlobalTimer1_End": "exit"},
-        )
-
-        sma.add_state(
-            state_name="reward",
-            state_timer=0,
-            output_actions=[("SoftCode", SOFTCODE.REWARD)],
-            state_change_conditions={"Tup": "exit"},
-        )
-
-        # # Dummy state because i can't seem to trigger a state from itself
-        sma.add_state(
-            state_name="transition",
-            state_timer=1 / 60,
-            state_change_conditions={
-                "RotaryEncoder1_1": "reward",
-                "GlobalTimer1_End": "exit",
-                "Tup": "call_panda",
-                # self.movement_right: "right_movement",
-            },
-        )
-
-        return sma
-
     @abc.abstractmethod
     def next_trial(self):
         pass
@@ -282,16 +236,31 @@ TIME FROM START:      {self.time_elapsed}
 with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
     DEFAULTS = yaml.safe_load(f)
 
+# TODO: make settings yaml
+REWARD_ZONE_TIME = 1.5
+ITI_LENGTH = 5
+SCREEN_REFRESH_RATE = 60  # Hz
+
 
 class Session(IblBase):
+    CORRIDOR_TEXTURES = [
+        "pinkBars.png",
+        "blueTriangles.jpg",
+        "horGrat.jpg",
+    ]
+
     def __init__(self) -> None:
-        self.protocol_name = "my- task"
+        self.protocol_name = "my-task"
         super().__init__(subject="steve")
+        self.corridor_idx = -1
         self.corridor = Corridor()
         self.inject_corridor(self.corridor)
 
     def next_trial(self):
+        self.device_rotary_encoder.reset_position()
         self.trial_num += 1
+        self.corridor_idx += 1
+        self.corridor.start_trial(self.CORRIDOR_TEXTURES[self.corridor_idx])
 
     def start_bpod(self):
         self.corridor.start()
@@ -299,7 +268,70 @@ class Session(IblBase):
         self.device_rotary_encoder.connect()
         self.run()
 
+    def get_state_machine_trial(self, i):
+        sma = StateMachine(self.bpod)
+        sma.set_global_timer(1, 5)
+        sma.set_global_counter(1, 3)
+
+        sma.add_state(
+            state_name="trial_start",
+            state_timer=0,
+            state_change_conditions={"Tup": "reset_rotary_encoder"},
+            output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
+        )
+
+        sma.add_state(
+            state_name="reset_rotary_encoder",
+            state_timer=0,
+            # output_actions=[self.bpod.actions.rotary_encoder_reset],
+            state_change_conditions={"Tup": "call_panda"},
+        )
+
+        sma.add_state(
+            state_name="call_panda",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="transition",
+            state_timer=1 / SCREEN_REFRESH_RATE,
+            state_change_conditions={
+                # "RotaryEncoder1_1": "reward",
+                "GlobalTimer1_End": "reward",
+                "Tup": "call_panda",
+            },
+        )
+
+        # TODO: This may need to be called multiple times if you don't want to hold the spout open for
+        # the whole time
+        sma.add_state(
+            state_name="reward",
+            state_timer=0,
+            output_actions=[
+                ("SoftCode", SOFTCODE.REWARD_ON)
+            ],  # Change to actual action
+            state_change_conditions={"Tup": "reward_off"},
+        )
+
+        sma.add_state(
+            state_name="reward_off",
+            state_timer=REWARD_ZONE_TIME,
+            output_actions=[("SoftCode", SOFTCODE.ITI)],
+            state_change_conditions={"Tup": "ITI"},
+        )
+
+        sma.add_state(
+            state_name="ITI",
+            state_timer=ITI_LENGTH,
+            state_change_conditions={"Tup": "exit"},
+        )
+
+        return sma
+
 
 if __name__ == "__main__":  # pragma: no cover
     session = Session()
     session.start_bpod()
+    session = Session()

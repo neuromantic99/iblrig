@@ -1,5 +1,5 @@
 import builtins
-from typing import Any
+from typing import Any, List
 
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
@@ -10,15 +10,15 @@ from panda3d.core import (
     TextureStage,
 )
 
-NUM_TURNS_PER_LAP = 2
+NUM_TURNS_PER_LAP = 5
 
-CORRIDOR_LENGTH = 1000
+CORRIDOR_LENGTH = 10000
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
 
 CAMERA_HEIGHT = 10
 # +5 so that the camera is not half out of the back wall
-CAMERA_START_Y = -CORRIDOR_LENGTH / 2 + 5
+CAMERA_START_Y = 0
 
 
 class Corridor(ShowBase):
@@ -28,14 +28,10 @@ class Corridor(ShowBase):
         # This helps pylance to not complain about it
         # probably remove in production
         base = builtins.base
-
         base.disableMouse()
 
         props = WindowProperties()
         props.setSize(800, 600)
-
-        self.build_corridor(0, "blueTriangles.jpg", False)
-        self.build_corridor(CORRIDOR_LENGTH, "pinkBars.png", True)
 
         self.left_window = self.openWindow(props, makeCamera=0)
         self.right_window = self.openWindow(props, makeCamera=0)
@@ -47,13 +43,33 @@ class Corridor(ShowBase):
         self.camera_left.reparentTo(self.camera)
         self.camera_right.reparentTo(self.camera)
 
-        self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
-        self.camera.lookAt(0, CORRIDOR_LENGTH, CAMERA_HEIGHT)
-
         self.camera_left.setHpr(90, 0, 0)
         self.camera_right.setHpr(-90, 0, 0)
 
         self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+
+        # Keep track of corridor nodes so we can remove them later
+        self.corridor_nodes: List[Any] = []
+
+    def start_trial(self, wall_texture: str) -> None:
+        # If you want multiple textures in the same corridor
+        # self.build_corridor(0, "blueTriangles.jpg", False)
+
+        self.clear_corridor()  # Clear existing corridor before building a new one
+
+        self.build_corridor(0, wall_texture, True)
+        self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
+        self.camera.lookAt(0, CORRIDOR_LENGTH, CAMERA_HEIGHT)
+
+    def clear_corridor(self) -> None:
+        """Removes existing corridor nodes from the scene."""
+        for node in self.corridor_nodes:
+            node.removeNode()
+        self.corridor_nodes.clear()
+
+    def ITI(self) -> None:
+        """Jump the camera outside the corridor for the ITI"""
+        self.camera.setPos(0, CORRIDOR_LENGTH + 10, CAMERA_HEIGHT * 1000)
 
     def start(self) -> None:
         if not self.win:
@@ -137,11 +153,6 @@ class Corridor(ShowBase):
             )
             corridor["back_wall"].setH(180)
 
-        # corridor["front_wall"] = self.render.attachNewNode(cm.generate())
-        # corridor["front_wall"].setPos(
-        #     0, -CORRIDOR_LENGTH / 2 + y_offset, CORRIDOR_HEIGHT / 2
-        # )
-
         for model_name, model in corridor.items():
             texture_path = (
                 "floor.jpg"
@@ -164,6 +175,8 @@ class Corridor(ShowBase):
                 model.setTexScale(TextureStage.getDefault(), 1, num_texture_tiles)
             elif model_name in ["left_wall", "right_wall"]:
                 model.setTexScale(TextureStage.getDefault(), num_texture_tiles, 1)
+
+            self.corridor_nodes.append(model)
 
 
 if __name__ == "__main__":

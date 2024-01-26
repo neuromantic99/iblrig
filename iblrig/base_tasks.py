@@ -30,7 +30,13 @@ import iblrig.graphic as graph
 import iblrig.path_helper
 import pybpodapi
 from iblrig import frame2TTL, sound
-from iblrig.hardware import SOFTCODE, Bpod, MyRotaryEncoder, sound_device_factory
+from iblrig.hardware import (
+    SOFTCODE,
+    Bpod,
+    MyRotaryEncoder,
+    MyRotaryEncoderMock,
+    sound_device_factory,
+)
 from iblrig.transfer_experiments import BehaviorCopier
 from iblutil.spacer import Spacer
 from iblutil.util import Bunch, setup_logger
@@ -782,7 +788,7 @@ class BpodMixin:
     def stop_mixin_bpod(self):
         self.bpod.close()
 
-    def inject_corridor(self, corridor):
+    def inject_corridor(self, corridor: Corridor):
         self.corridor = corridor
 
     def start_mixin_bpod(self):
@@ -816,22 +822,23 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 self.device_rotary_encoder.increment_position()
-                print(
-                    f"Angle {self.device_rotary_encoder.rotary_encoder.current_position()}"
-                )
+                # print(
+                #     f"Angle {self.device_rotary_encoder.rotary_encoder.current_position()}"
+                # )
                 self.device_rotary_encoder.update_position()
                 self.corridor.set_camera_position(
                     self.device_rotary_encoder.position
                     / self.device_rotary_encoder.WHEEL_PERIM
                 )
                 self.corridor.step()
-            elif code == SOFTCODE.REWARD:
-                print(
-                    f"Reward triggered at position: {self.device_rotary_encoder.rotary_encoder.current_position()}"
-                )
+            elif code == SOFTCODE.REWARD_ON:
+                print("Reward triggered mate")
+            elif code == SOFTCODE.ITI:
+                print("ITI triggered mate")
+                self.corridor.ITI()
+                self.corridor.step()
 
         self.bpod.softcode_handler_function = softcode_handler
-
         assert self.bpod.is_connected
         self.logger.info("Bpod hardware module loaded: OK")
 
@@ -885,7 +892,13 @@ class RotaryEncoderMixin:
     """
 
     def init_mixin_rotary_encoder(self, *args, **kwargs):
-        self.device_rotary_encoder = MyRotaryEncoder(
+        # self.device_rotary_encoder = MyRotaryEncoder(
+        #     gain=1,
+        #     com=self.hardware_settings.device_rotary_encoder["COM_ROTARY_ENCODER"],
+        #     connect=False,
+        # )
+
+        self.device_rotary_encoder = MyRotaryEncoderMock(
             gain=1,
             com=self.hardware_settings.device_rotary_encoder["COM_ROTARY_ENCODER"],
             connect=False,
