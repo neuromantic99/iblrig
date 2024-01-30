@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "run task",
+      "type": "python",
+      "request": "launch",
+      "program": "tasks/task.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "run panda.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/iblrig/panda3d/corridor/corridor.py",
+      "console": "integratedTerminal",
+      "args": ["-m", "main_task.task"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    }
+  ]
+}
