@@ -1,6 +1,5 @@
 from pybpodapi.com.arcom import ArCOM, ArduinoTypes
 
-
 class RotaryEncoderModule(object):
     COM_HANDSHAKE = "C"
     COM_TOGGLEEVTTRANSM = ord("V")
@@ -26,8 +25,6 @@ class RotaryEncoderModule(object):
         """
         if serialport:
             self.open(serialport)
-
-        self.previous_position = 0
 
     def open(self, serialport):
         """
@@ -99,15 +96,14 @@ class RotaryEncoderModule(object):
         res = []
         available = self.arcom.bytes_available()
 
-        if available > 0:
+        if available > 1:
             msg = self.arcom.read_bytes_array(available)
 
             while len(msg) >= 7:
                 if msg[0] == b"P":
                     position = int.from_bytes(
-                        b"".join(msg[1:3]), byteorder="big", signed=True
+                        b"".join(msg[1:3]), byteorder="little", signed=True
                     )
-
                     evt_time = (
                         float(
                             int.from_bytes(
@@ -212,7 +208,7 @@ class RotaryEncoderModule(object):
                 / 1000.0
             )
             position_degrees = self.__pos_2_degrees(position)
-            data.append((evt_time, position))
+            data.append((evt_time, position_degrees))
 
         return data
 
@@ -250,35 +246,22 @@ class RotaryEncoderModule(object):
 
 
 if __name__ == "__main__":
-    import time
 
-    print("hello world")
-
-    port = "/dev/tty.usbmodem69660901"
-    # port = "/dev/tty.usbmodem69656901"
-
+    # port = "/dev/tty.usbmodem69660901"
+    port = "COM5"
     rotary_encoder = RotaryEncoderModule(port)
-    # rotary_encoder.enable_logging()
-    # time.sleep(8)
 
-    # print(rotary_encoder.get_logged_data())
-
-    rotary_encoder.enable_thresholds([False] * 8)
-    # rotary_encoder.set_zero_position()
-
+    rotary_encoder.set_zero_position()
     rotary_encoder.enable_stream()
 
-    print(rotary_encoder.current_position())
     count = 0
-    print("off we go ")
     while count < 10000:
-        time.sleep(1)
-        print(rotary_encoder.current_position())
-        # data = rotary_encoder.read_stream()
-        # if len(data) == 0:
-        #     continuek
-        # print(f"{count}: {data}")
-        # count += 1
+        data = rotary_encoder.read_stream()
+        if len(data) == 0:
+            continue
+
+        print(data)
+        count += 1
 
     rotary_encoder.disable_stream()
     rotary_encoder.close()
