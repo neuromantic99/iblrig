@@ -10,7 +10,7 @@ RIG_NAME: __example_rig
 # NB: When MAIN_SYNC is True, chained protocols are not supported.
 MAIN_SYNC: True
 device_bpod:
-  COM_BPOD: /dev/tty.usbmodem71561901
+  COM_BPOD: COM4
   BPOD_TTL_TEST_DATE: null # optional
   BPOD_TTL_TEST_STATUS: null # optional
   SOUND_BOARD_BPOD_PORT: null # optional
@@ -22,7 +22,7 @@ device_frame2ttl:
   F2TTL_HW_VERSION: null
   F2TTL_LIGHT_THRESH: 51.0
 device_rotary_encoder:
-  COM_ROTARY_ENCODER: /dev/tty.usbmodem69660901
+  COM_ROTARY_ENCODER: COM5
 device_screen:
   DISPLAY_IDX: 1
   SCREEN_FREQ_TARGET: 60

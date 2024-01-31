@@ -34,7 +34,6 @@ from iblrig.hardware import (
     SOFTCODE,
     Bpod,
     MyRotaryEncoder,
-    MyRotaryEncoderMock,
     sound_device_factory,
 )
 from iblrig.transfer_experiments import BehaviorCopier
@@ -821,11 +820,14 @@ class BpodMixin:
             elif code == SOFTCODE.TRIGGER_CAMERA:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
-                self.device_rotary_encoder.increment_position()
-                # print(
-                #     f"Angle {self.device_rotary_encoder.rotary_encoder.current_position()}"
-                # )
-                self.device_rotary_encoder.update_position()
+                data = self.device_rotary_encoder.rotary_encoder.read_stream()
+                try:
+                    angle = data[0][2]
+                except IndexError:
+                    angle = None
+
+                self.device_rotary_encoder.update_position(angle)
+                print(f"Rotary encoder angle: {self.device_rotary_encoder.position}")
                 self.corridor.set_camera_position(
                     self.device_rotary_encoder.position
                     / self.device_rotary_encoder.WHEEL_PERIM
@@ -892,13 +894,7 @@ class RotaryEncoderMixin:
     """
 
     def init_mixin_rotary_encoder(self, *args, **kwargs):
-        # self.device_rotary_encoder = MyRotaryEncoder(
-        #     gain=1,
-        #     com=self.hardware_settings.device_rotary_encoder["COM_ROTARY_ENCODER"],
-        #     connect=False,
-        # )
-
-        self.device_rotary_encoder = MyRotaryEncoderMock(
+        self.device_rotary_encoder = MyRotaryEncoder(
             gain=1,
             com=self.hardware_settings.device_rotary_encoder["COM_ROTARY_ENCODER"],
             connect=False,

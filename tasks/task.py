@@ -238,7 +238,7 @@ with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
 
 # TODO: make settings yaml
 REWARD_ZONE_TIME = 1.5
-ITI_LENGTH = 5
+ITI_LENGTH = 1
 SCREEN_REFRESH_RATE = 60  # Hz
 
 
@@ -265,27 +265,25 @@ class Session(IblBase):
     def start_bpod(self):
         self.corridor.start()
         self.corridor.step()
-        self.device_rotary_encoder.connect()
         self.run()
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 5)
-        sma.set_global_counter(1, 3)
+        sma.set_global_timer(1, 30)
 
         sma.add_state(
             state_name="trial_start",
             state_timer=0,
-            state_change_conditions={"Tup": "reset_rotary_encoder"},
+            state_change_conditions={"Tup": "call_panda"},
             output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
         )
 
-        sma.add_state(
-            state_name="reset_rotary_encoder",
-            state_timer=0,
-            # output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "call_panda"},
-        )
+        # sma.add_state(
+        #     state_name="reset_rotary_encoder",
+        #     state_timer=0,
+        #     # output_actions=[self.bpod.actions.rotary_encoder_reset],
+        #     state_change_conditions={"Tup": "call_panda"},
+        # )
 
         sma.add_state(
             state_name="call_panda",
@@ -298,8 +296,9 @@ class Session(IblBase):
             state_name="transition",
             state_timer=1 / SCREEN_REFRESH_RATE,
             state_change_conditions={
-                # "RotaryEncoder1_1": "reward",
-                "GlobalTimer1_End": "reward",
+                "RotaryEncoder1_1": "reward",
+                "RotaryEncoder1_2": "reward",
+                "GlobalTimer1_End": "exit",
                 "Tup": "call_panda",
             },
         )
@@ -334,4 +333,3 @@ class Session(IblBase):
 if __name__ == "__main__":  # pragma: no cover
     session = Session()
     session.start_bpod()
-    session = Session()

@@ -5,3 +5,5 @@ python-osc
 opencv-python-headless<4.3
 panda3d
 sounddevice
+
+# Install panda3d from the website

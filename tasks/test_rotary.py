@@ -1,5 +1,6 @@
 from pybpodapi.com.arcom import ArCOM, ArduinoTypes
 
+
 class RotaryEncoderModule(object):
     COM_HANDSHAKE = "C"
     COM_TOGGLEEVTTRANSM = ord("V")
@@ -246,7 +247,6 @@ class RotaryEncoderModule(object):
 
 
 if __name__ == "__main__":
-
     # port = "/dev/tty.usbmodem69660901"
     port = "COM5"
     rotary_encoder = RotaryEncoderModule(port)
