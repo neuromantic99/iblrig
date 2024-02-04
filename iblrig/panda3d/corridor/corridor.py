@@ -82,7 +82,7 @@ class Corridor(ShowBase):
         the perimeter of the wheel
         """
         distance = (
-            fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP * -1
+            fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP
         )  # Negative angle is forwards in the world
         self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
 

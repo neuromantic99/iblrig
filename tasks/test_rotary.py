@@ -251,15 +251,11 @@ if __name__ == "__main__":
     port = "COM5"
     rotary_encoder = RotaryEncoderModule(port)
 
-    rotary_encoder.set_zero_position()
-    rotary_encoder.enable_stream()
+    rotary_encoder.disable_stream()
 
     count = 0
     while count < 10000:
-        data = rotary_encoder.read_stream()
-        if len(data) == 0:
-            continue
-
+        data = rotary_encoder.current_position()
         print(data)
         count += 1
 

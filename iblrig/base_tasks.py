@@ -820,14 +820,9 @@ class BpodMixin:
             elif code == SOFTCODE.TRIGGER_CAMERA:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
-                data = self.device_rotary_encoder.rotary_encoder.read_stream()
-                try:
-                    angle = data[0][2]
-                except IndexError:
-                    angle = None
-
-                self.device_rotary_encoder.update_position(angle)
-                print(f"Rotary encoder angle: {self.device_rotary_encoder.position}")
+                position = self.device_rotary_encoder.rotary_encoder.current_position()
+                self.device_rotary_encoder.update_position(position)
+                print(f"Rotary encoder angle: {position}")
                 self.corridor.set_camera_position(
                     self.device_rotary_encoder.position
                     / self.device_rotary_encoder.WHEEL_PERIM

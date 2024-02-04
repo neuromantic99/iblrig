@@ -248,8 +248,7 @@ class MyRotaryEncoder:
         self.position = 0
         self.previous_angle = 0
 
-        # The scaling factor between this and the rotary encoder angle is -0.5
-        all_thresholds = [-30, -90]
+        all_thresholds = [90]
         self.SET_THRESHOLDS = [x * self.factor for x in all_thresholds]
         self.ENABLE_THRESHOLDS = [True] * len(all_thresholds)
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
@@ -271,6 +270,10 @@ class MyRotaryEncoder:
         ticks = self.rotary_encoder._RotaryEncoderModule__degrees_2_pos(degrees)
         self.rotary_encoder.set_position(ticks)
 
+    def set_thresholds(self) -> None:
+        self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
+        self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
+
     def increment_position(self):
         """Debugging use only."""
         self.set_position(self.get_angle() + 10)
@@ -279,10 +282,10 @@ class MyRotaryEncoder:
         if self.RE_PORT == "COM#":
             return
         self.rotary_encoder = RotaryEncoderModule(self.RE_PORT)
+        # Reading the current position doesn't work unless you do this
+        self.rotary_encoder.disable_stream()
         self.rotary_encoder.set_zero_position()
-        self.rotary_encoder.enable_stream()
-        self.rotary_encoder.enable_thresholds(self.ENABLE_THRESHOLDS)
-        self.rotary_encoder.set_thresholds(self.SET_THRESHOLDS)
+        self.set_thresholds()
         self.rotary_encoder.enable_evt_transmission()
         self.connected = True
 

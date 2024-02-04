@@ -239,7 +239,7 @@ with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
 # TODO: make settings yaml
 REWARD_ZONE_TIME = 1.5
 ITI_LENGTH = 1
-SCREEN_REFRESH_RATE = 60  # Hz
+SCREEN_REFRESH_RATE = 30  # Hz
 
 
 class Session(IblBase):
@@ -269,7 +269,11 @@ class Session(IblBase):
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 30)
+        sma.set_global_counter(
+            counter_number=1,
+            target_event="RotaryEncoder1_1",
+            threshold=4,
+        )
 
         sma.add_state(
             state_name="trial_start",
@@ -278,12 +282,12 @@ class Session(IblBase):
             output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
         )
 
-        # sma.add_state(
-        #     state_name="reset_rotary_encoder",
-        #     state_timer=0,
-        #     # output_actions=[self.bpod.actions.rotary_encoder_reset],
-        #     state_change_conditions={"Tup": "call_panda"},
-        # )
+        sma.add_state(
+            state_name="reset_rotary_encoder",
+            state_timer=0,
+            output_actions=[self.bpod.actions.rotary_encoder_reset],
+            state_change_conditions={"Tup": "call_panda"},
+        )
 
         sma.add_state(
             state_name="call_panda",
@@ -296,11 +300,17 @@ class Session(IblBase):
             state_name="transition",
             state_timer=1 / SCREEN_REFRESH_RATE,
             state_change_conditions={
-                "RotaryEncoder1_1": "reward",
-                "RotaryEncoder1_2": "reward",
-                "GlobalTimer1_End": "exit",
+                "RotaryEncoder1_1": "threshold_reached",
                 "Tup": "call_panda",
             },
+        )
+        sma.add_state(
+            state_name="threshold_reached",
+            state_timer=0,
+            output_actions=[
+                self.bpod.actions.rotary_encoder_reset,
+            ],
+            state_change_conditions={"GlobalCounter1_End": "exit", "Tup": "transition"},
         )
 
         # TODO: This may need to be called multiple times if you don't want to hold the spout open for
