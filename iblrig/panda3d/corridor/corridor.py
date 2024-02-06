@@ -10,15 +10,15 @@ from panda3d.core import (
     TextureStage,
 )
 
-NUM_TURNS_PER_LAP = 5
+NUM_TURNS_PER_LAP = 1
 
-CORRIDOR_LENGTH = 10000
+CORRIDOR_LENGTH = 3000
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
 
 CAMERA_HEIGHT = 10
-# +5 so that the camera is not half out of the back wall
-CAMERA_START_Y = 0
+# TODO: camera starts half out the back wall
+CAMERA_START_Y = int(CORRIDOR_LENGTH / 2) * -1
 
 
 class Corridor(ShowBase):
@@ -75,15 +75,14 @@ class Corridor(ShowBase):
         if not self.win:
             self.openMainWindow()
 
-    def set_camera_position(self, fraction_through_turn: float) -> None:
+    def set_camera_position(self, position: float) -> None:
         """Set camera position based on the number of
         full wheel rotations required to complete the corridor
         TODO: This logic might be slightly odd because it completely ignores
         the perimeter of the wheel
         """
-        distance = (
-            fraction_through_turn * CORRIDOR_LENGTH / NUM_TURNS_PER_LAP
-        )  # Negative angle is forwards in the world
+        fraction_through_turn = position / 360
+        distance = (fraction_through_turn * CORRIDOR_LENGTH) / NUM_TURNS_PER_LAP
         self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
 
     def step(self) -> None:
@@ -157,9 +156,7 @@ class Corridor(ShowBase):
             texture_path = (
                 "floor.jpg"
                 if model_name in ["floor", "ceiling"]
-                else "endOfCorridor.png"
-                if model_name == "back_wall"
-                else wall_texture
+                else "endOfCorridor.png" if model_name == "back_wall" else wall_texture
             )
             texture = self.loader.load_texture(
                 f"iblrig/panda3d/corridor/textures/{texture_path}"

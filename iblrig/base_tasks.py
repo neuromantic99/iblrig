@@ -3,6 +3,7 @@ This module is intended to provide commonalities for all tasks.
 It provides hardware mixins that can be used together with BaseSession to compose tasks
 This module tries to be exclude task related logic
 """
+
 import abc
 import argparse
 import datetime
@@ -821,12 +822,8 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
-                self.device_rotary_encoder.update_position(position)
-                print(f"Rotary encoder angle: {position}")
-                self.corridor.set_camera_position(
-                    self.device_rotary_encoder.position
-                    / self.device_rotary_encoder.WHEEL_PERIM
-                )
+                print(f"Current position: {position}")
+                self.corridor.set_camera_position(position)
                 self.corridor.step()
             elif code == SOFTCODE.REWARD_ON:
                 print("Reward triggered mate")
