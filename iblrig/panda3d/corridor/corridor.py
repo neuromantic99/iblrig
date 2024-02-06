@@ -12,7 +12,11 @@ from panda3d.core import (
 
 NUM_TURNS_PER_LAP = 1
 
-CORRIDOR_LENGTH = 3000
+DISTANCE_TO_REWARD_ZONE = 3000
+REWARD_ZONE_LENGTH = 500
+
+CORRIDOR_LENGTH = DISTANCE_TO_REWARD_ZONE + REWARD_ZONE_LENGTH
+
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
 
@@ -56,8 +60,7 @@ class Corridor(ShowBase):
         # self.build_corridor(0, "blueTriangles.jpg", False)
 
         self.clear_corridor()  # Clear existing corridor before building a new one
-
-        self.build_corridor(0, wall_texture, True)
+        self.build_corridor(0, True, wall_texture)
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
         self.camera.lookAt(0, CORRIDOR_LENGTH, CAMERA_HEIGHT)
 
@@ -69,7 +72,9 @@ class Corridor(ShowBase):
 
     def ITI(self) -> None:
         """Jump the camera outside the corridor for the ITI"""
-        self.camera.setPos(0, CORRIDOR_LENGTH + 10, CAMERA_HEIGHT * 1000)
+        self.clear_corridor()
+        self.build_corridor(0, True, "black.png", "black.png", "black.png")
+        self.step()
 
     def start(self) -> None:
         if not self.win:
@@ -82,7 +87,7 @@ class Corridor(ShowBase):
         the perimeter of the wheel
         """
         fraction_through_turn = position / 360
-        distance = (fraction_through_turn * CORRIDOR_LENGTH) / NUM_TURNS_PER_LAP
+        distance = (fraction_through_turn * DISTANCE_TO_REWARD_ZONE) / NUM_TURNS_PER_LAP
         self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
 
     def step(self) -> None:
@@ -100,7 +105,12 @@ class Corridor(ShowBase):
         return Task.cont
 
     def build_corridor(
-        self, y_offset: int, wall_texture: str, add_back_wall: bool
+        self,
+        y_offset: int,
+        add_back_wall: bool,
+        wall_texture: str,
+        floor_texture: str = "floor.jpg",
+        back_wall_texture: str = "endOfCorridor.png",
     ) -> None:
         cm = CardMaker("corridor_segment")
 
@@ -154,9 +164,9 @@ class Corridor(ShowBase):
 
         for model_name, model in corridor.items():
             texture_path = (
-                "floor.jpg"
+                floor_texture
                 if model_name in ["floor", "ceiling"]
-                else "endOfCorridor.png" if model_name == "back_wall" else wall_texture
+                else back_wall_texture if model_name == "back_wall" else wall_texture
             )
             texture = self.loader.load_texture(
                 f"iblrig/panda3d/corridor/textures/{texture_path}"

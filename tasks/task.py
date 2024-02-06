@@ -31,8 +31,10 @@ log = setup_logger("iblrig")
 
 # TODO: make settings yaml
 REWARD_ZONE_TIME = 1.5
-ITI_LENGTH = 1
-SCREEN_REFRESH_RATE = 60  # Hz
+ITI_LENGTH = 3
+# Going too high takes a while to trigger the RotaryEncoder_1 event
+# review when plugged into setup
+SCREEN_REFRESH_RATE = 30  # Hz
 NUMBER_TURNS_TO_REWARD = 2
 
 
@@ -271,12 +273,13 @@ class Session(IblBase):
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
+        sma.set_global_timer(1, REWARD_ZONE_TIME)
 
         sma.add_state(
             state_name="trial_start",
             state_timer=0,
-            state_change_conditions={"Tup": "call_panda"},
-            output_actions=[("GlobalTimerTrig", 1), ("PWM1", 0)],
+            state_change_conditions={"Tup": "reset_rotary_encoder"},
+            output_actions=[("PWM1", 0)],
         )
 
         sma.add_state(
@@ -297,7 +300,8 @@ class Session(IblBase):
             state_name="transition",
             state_timer=1 / SCREEN_REFRESH_RATE,
             state_change_conditions={
-                "RotaryEncoder1_1": "reward",
+                "RotaryEncoder1_1": "reward_on",
+                "GlobalTimer1_End": "reward_off",
                 "Tup": "call_panda",
             },
         )
@@ -305,18 +309,20 @@ class Session(IblBase):
         # TODO: This may need to be called multiple times if you don't want to hold the spout open for
         # the whole time
         sma.add_state(
-            state_name="reward",
-            state_timer=1,
+            state_name="reward_on",
+            state_timer=0,
             output_actions=[
-                ("SoftCode", SOFTCODE.REWARD_ON)
-            ],  # Change to actual action
-            state_change_conditions={"Tup": "exit"},
+                ("Valve1", 255),
+                ("BNC1", 255),
+                ("GlobalTimerTrig", 1),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "transition"},
         )
 
         sma.add_state(
             state_name="reward_off",
-            state_timer=REWARD_ZONE_TIME,
-            output_actions=[("SoftCode", SOFTCODE.ITI)],
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.ITI), ("Valve1", 0)],
             state_change_conditions={"Tup": "ITI"},
         )
 
