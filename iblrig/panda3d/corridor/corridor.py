@@ -14,8 +14,10 @@ NUM_TURNS_PER_LAP = 1
 
 DISTANCE_TO_REWARD_ZONE = 3000
 REWARD_ZONE_LENGTH = 500
-
 CORRIDOR_LENGTH = DISTANCE_TO_REWARD_ZONE + REWARD_ZONE_LENGTH
+
+# Add a bit on the end to stop the mouse going out of the corridor backwards
+ADDITIONAL_BACKWARDS_LENGTH = 800
 
 CORRIDOR_WIDTH = 25
 CORRIDOR_HEIGHT = 25
@@ -58,7 +60,6 @@ class Corridor(ShowBase):
     def start_trial(self, wall_texture: str) -> None:
         # If you want multiple textures in the same corridor
         # self.build_corridor(0, "blueTriangles.jpg", False)
-
         self.clear_corridor()  # Clear existing corridor before building a new one
         self.build_corridor(0, True, wall_texture)
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
@@ -120,7 +121,7 @@ class Corridor(ShowBase):
         cm.setFrame(
             -CORRIDOR_WIDTH / 2,
             CORRIDOR_WIDTH / 2,
-            -CORRIDOR_LENGTH / 2,
+            -CORRIDOR_LENGTH / 2 - ADDITIONAL_BACKWARDS_LENGTH,
             CORRIDOR_LENGTH / 2,
         )
         corridor["floor"] = self.render.attachNewNode(cm.generate())
@@ -133,8 +134,8 @@ class Corridor(ShowBase):
 
         # Side Walls
         cm.setFrame(
-            -CORRIDOR_LENGTH / 2,
-            CORRIDOR_LENGTH / 2,
+            -CORRIDOR_LENGTH / 2 - ADDITIONAL_BACKWARDS_LENGTH,
+            CORRIDOR_LENGTH / 2 + ADDITIONAL_BACKWARDS_LENGTH,
             -CORRIDOR_HEIGHT / 2,
             CORRIDOR_HEIGHT / 2,
         )

@@ -142,28 +142,7 @@ class IblBase(
         return self.task_params.REWARD_AMOUNT_UL
 
     def trial_completed(self, bpod_data):
-        # if the reward state has not been triggered, null the reward
-        if np.isnan(bpod_data["States timestamps"]["reward"][0][0]):
-            self.trials_table.at[self.trial_num, "reward_amount"] = 0
-        self.trials_table.at[self.trial_num, "reward_valve_time"] = self.reward_time
-        # update cumulative reward value
-        self.session_info.TOTAL_WATER_DELIVERED += self.trials_table.at[
-            self.trial_num, "reward_amount"
-        ]
-        self.session_info.NTRIALS += 1
-        # SAVE TRIAL DATA
-        save_dict = self.trials_table.iloc[self.trial_num].to_dict()
-        save_dict["behavior_data"] = bpod_data
-        # Dump and save
-        with open(self.paths["DATA_FILE_PATH"], "a") as fp:
-            fp.write(json.dumps(save_dict) + "\n")
-        # this is a flag for the online plots. If online plots were in pyqt5, there is a file watcher functionality
-        Path(self.paths["DATA_FILE_PATH"]).parent.joinpath("new_trial.flag").touch()
-        # If more than 42 trials save transfer_me.flag
-        if self.trial_num == 42:
-            self.paths.SESSION_FOLDER.joinpath("transfer_me.flag").touch()
-            # todo: add number of devices in there
-        self.check_sync_pulses(bpod_data=bpod_data)
+        pass
 
     def check_sync_pulses(self, bpod_data):
         # todo move this in the post trial when we have a task flow
@@ -248,9 +227,9 @@ with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
 
 class Session(IblBase):
     CORRIDOR_TEXTURES = [
+        "verticalGrating.jpg",
         "pinkBars.png",
         "blueTriangles.jpg",
-        "horGrat.jpg",
     ]
 
     def __init__(self) -> None:
@@ -261,10 +240,14 @@ class Session(IblBase):
         self.inject_corridor(self.corridor)
 
     def next_trial(self):
+        """Called before every trial, including the first and before get_state_machine_trial"""
+        self.texture_idx = np.random.randint(0, 3)
+        texture = self.CORRIDOR_TEXTURES[self.texture_idx]
         self.device_rotary_encoder.reset_position()
         self.trial_num += 1
         self.corridor_idx += 1
-        self.corridor.start_trial(self.CORRIDOR_TEXTURES[self.corridor_idx])
+        print(f"Starting trial with texture: {texture}")
+        self.corridor.start_trial(texture)
 
     def start_bpod(self):
         self.corridor.start()
@@ -272,11 +255,75 @@ class Session(IblBase):
         self.run()
 
     def get_state_machine_trial(self, i):
+        return (
+            self.get_state_machine_trial_unrewarded(i)
+            if self.texture_idx == 0
+            else self.get_state_machine_trial_rewarded(i)
+        )
+
+    def get_state_machine_trial_unrewarded(self, i):
         sma = StateMachine(self.bpod)
         sma.set_global_timer(1, REWARD_ZONE_TIME)
 
         sma.add_state(
-            state_name="trial_start",
+            state_name="trial_start_unrewarded",
+            state_timer=0,
+            state_change_conditions={"Tup": "reset_rotary_encoder"},
+            output_actions=[("PWM1", 0)],
+        )
+
+        sma.add_state(
+            state_name="reset_rotary_encoder",
+            state_timer=0,
+            output_actions=[self.bpod.actions.rotary_encoder_reset],
+            state_change_conditions={"Tup": "call_panda"},
+        )
+
+        sma.add_state(
+            state_name="call_panda",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="transition",
+            state_timer=1 / SCREEN_REFRESH_RATE,
+            state_change_conditions={
+                "RotaryEncoder1_1": "pseudo_reward_on",
+                "GlobalTimer1_End": "pseudo_reward_off",
+                "Tup": "call_panda",
+            },
+        )
+
+        sma.add_state(
+            state_name="pseudo_reward_on",
+            state_timer=0,
+            output_actions=[("BNC1", 255), ("GlobalTimerTrig", 1)],  # To FPGA
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="pseudo_reward_off",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.ITI)],
+            state_change_conditions={"Tup": "ITI"},
+        )
+
+        sma.add_state(
+            state_name="ITI",
+            state_timer=ITI_LENGTH,
+            state_change_conditions={"Tup": "exit"},
+        )
+
+        return sma
+
+    def get_state_machine_trial_rewarded(self, i):
+        sma = StateMachine(self.bpod)
+        sma.set_global_timer(1, REWARD_ZONE_TIME)
+
+        sma.add_state(
+            state_name="trial_start_rewarded",
             state_timer=0,
             state_change_conditions={"Tup": "reset_rotary_encoder"},
             output_actions=[("PWM1", 0)],

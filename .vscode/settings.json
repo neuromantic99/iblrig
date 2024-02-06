@@ -28,5 +28,6 @@
     "--follow-imports=silent",
     "--show-column-numbers",
     // "--disallow-untyped-defs"
-  ]
+  ],
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

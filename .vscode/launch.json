@@ -11,7 +11,7 @@
       "env": {
         "PYTHONPATH": "${workspaceFolder}"
       },
-      "justMyCode": true
+      "justMyCode": false
     },
     {
       "name": "run panda.py",
