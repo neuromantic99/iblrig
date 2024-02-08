@@ -29,14 +29,6 @@ from iblrig.panda3d.corridor.corridor import Corridor
 
 log = setup_logger("iblrig")
 
-# TODO: make settings yaml
-REWARD_ZONE_TIME = 1.5
-ITI_LENGTH = 3
-# Going too high takes a while to trigger the RotaryEncoder_1 event
-# review when plugged into setup
-SCREEN_REFRESH_RATE = 30  # Hz
-NUMBER_TURNS_TO_REWARD = 2
-
 
 class IblBase(
     iblrig.base_tasks.BaseSession,
@@ -46,7 +38,7 @@ class IblBase(
     iblrig.base_tasks.ValveMixin,
 ):
     base_parameters_file = Path(__file__).parent.parent.joinpath(
-        "iblrig/base_choice_world_params.yaml"
+        "iblrig/task_parameters.yaml"
     )
 
     def __init__(self, subject: str, delay_secs: int = 0):
@@ -110,23 +102,22 @@ class IblBase(
             log.info("Sending state machine to bpod")
             # Send state machine description to Bpod device
             self.bpod.send_state_machine(sma)
-            # t_overhead = time.time() - t_overhead
             # Run state machine
-            dt = (
-                self.task_params.ITI_DELAY_SECS
-                - 0.5
-                - (time.time() - time_last_trial_end)
-            )
-            # wait to achieve the desired ITI duration
-            if dt > 0:
-                time.sleep(dt)
+
+            # Used to be an ITI delay here which can be readded if needed
             log.info("running state machine")
             self.bpod.run_state_machine(
                 sma
             )  # Locks until state machine 'exit' is reached
             time_last_trial_end = time.time()
             self.trial_completed(self.bpod.session.current_trial.export())
+
             self.show_trial_log()
+            x = [
+                event
+                for event in self.bpod.session.current_trial.events_occurrences
+                if event.event_name == "Port1In"
+            ]
             while self.paths.SESSION_FOLDER.joinpath(".pause").exists():
                 time.sleep(1)
             if self.paths.SESSION_FOLDER.joinpath(".stop").exists():
@@ -244,6 +235,7 @@ class Session(IblBase):
         self.texture_idx = np.random.randint(0, 3)
         texture = self.CORRIDOR_TEXTURES[self.texture_idx]
         self.device_rotary_encoder.reset_position()
+        self.device_rotary_encoder.set_thresholds()
         self.trial_num += 1
         self.corridor_idx += 1
         print(f"Starting trial with texture: {texture}")
@@ -255,6 +247,7 @@ class Session(IblBase):
         self.run()
 
     def get_state_machine_trial(self, i):
+        # return self.open_and_close_valve(i)
         return (
             self.get_state_machine_trial_unrewarded(i)
             if self.texture_idx == 0
@@ -263,7 +256,7 @@ class Session(IblBase):
 
     def get_state_machine_trial_unrewarded(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, REWARD_ZONE_TIME)
+        sma.set_global_timer(1, self.task_params.REWARD_ZONE_TIME)
 
         sma.add_state(
             state_name="trial_start_unrewarded",
@@ -288,7 +281,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="transition",
-            state_timer=1 / SCREEN_REFRESH_RATE,
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 "RotaryEncoder1_1": "pseudo_reward_on",
                 "GlobalTimer1_End": "pseudo_reward_off",
@@ -298,29 +291,72 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="pseudo_reward_on",
-            state_timer=0,
+            state_timer=0.01,
             output_actions=[("BNC1", 255), ("GlobalTimerTrig", 1)],  # To FPGA
             state_change_conditions={"Tup": "transition"},
         )
 
         sma.add_state(
             state_name="pseudo_reward_off",
-            state_timer=0,
+            state_timer=0.01,
             output_actions=[("SoftCode", SOFTCODE.ITI)],
             state_change_conditions={"Tup": "ITI"},
         )
 
         sma.add_state(
             state_name="ITI",
-            state_timer=ITI_LENGTH,
+            state_timer=self.task_params.ITI_LENGTH,
             state_change_conditions={"Tup": "exit"},
         )
 
         return sma
 
+    def open_and_close_valve(self, i):
+        sma = StateMachine(self.bpod)
+        sma.set_global_timer(1, 10)
+
+        sma.add_state(
+            state_name="start",
+            state_timer=1,
+            output_actions=[("GlobalTimerTrig", 1)],
+            state_change_conditions={
+                "Tup": "open",
+            },
+        )
+
+        sma.add_state(
+            state_name="open",
+            state_timer=1,
+            output_actions=[
+                # ("Valve", 1),
+                ("Valve1", 255),
+                # ("ValveState", 1),
+                # ("ValveState", 4),
+                # ("BNC1", 255),
+            ],  # To FPGA
+            state_change_conditions={
+                "Tup": "close",
+                "GlobalTimer1_End": "exit",
+            },
+        )
+
+        sma.add_state(
+            state_name="close",
+            state_timer=1,
+            state_change_conditions={
+                "Tup": "open",
+            },
+            output_actions=[
+                # ("Valve", 1),
+                ("Valve1", 0),
+                # ("BNC1", 255),
+            ],  # To FPGA
+        )
+        return sma
+
     def get_state_machine_trial_rewarded(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, REWARD_ZONE_TIME)
+        sma.set_global_timer(1, self.task_params.REWARD_ZONE_TIME)
 
         sma.add_state(
             state_name="trial_start_rewarded",
@@ -345,7 +381,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="transition",
-            state_timer=1 / SCREEN_REFRESH_RATE,
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 "RotaryEncoder1_1": "reward_on",
                 "GlobalTimer1_End": "reward_off",
@@ -357,10 +393,11 @@ class Session(IblBase):
         # the whole time
         sma.add_state(
             state_name="reward_on",
-            state_timer=0,
+            # Needs a few ms to turn the reward on. This could be lengthed if causing issues, mouse won't notice
+            # screen freezing for 10ms while it's rewarded
+            state_timer=0.01,
             output_actions=[
                 ("Valve1", 255),
-                ("BNC1", 255),
                 ("GlobalTimerTrig", 1),
             ],  # To FPGA
             state_change_conditions={"Tup": "transition"},
@@ -368,14 +405,15 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="reward_off",
-            state_timer=0,
+            # Timer as above
+            state_timer=0.01,
             output_actions=[("SoftCode", SOFTCODE.ITI), ("Valve1", 0)],
             state_change_conditions={"Tup": "ITI"},
         )
 
         sma.add_state(
             state_name="ITI",
-            state_timer=ITI_LENGTH,
+            state_timer=self.task_params.ITI_LENGTH,
             state_change_conditions={"Tup": "exit"},
         )
 
