@@ -26,6 +26,8 @@ CAMERA_HEIGHT = 10
 # TODO: camera starts half out the back wall
 CAMERA_START_Y = int(CORRIDOR_LENGTH / 2) * -1
 
+STOPPING_DISTANCE_FROM_END = 50
+
 
 class Corridor(ShowBase):
     def __init__(self) -> None:
@@ -89,7 +91,12 @@ class Corridor(ShowBase):
         """
         fraction_through_turn = position / 360
         distance = (fraction_through_turn * DISTANCE_TO_REWARD_ZONE) / NUM_TURNS_PER_LAP
-        self.camera.setPos(0, distance + CAMERA_START_Y, CAMERA_HEIGHT)
+
+        set_camera_position = min(
+            distance + CAMERA_START_Y, CORRIDOR_LENGTH / 2 - STOPPING_DISTANCE_FROM_END
+        )
+
+        self.camera.setPos(0, set_camera_position, CAMERA_HEIGHT)
 
     def step(self) -> None:
         self.taskMgr.step()
