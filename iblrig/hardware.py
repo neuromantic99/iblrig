@@ -173,7 +173,6 @@ class Bpod(BpodIO):
                         self.rotary_encoder,
                         [
                             RotaryEncoder.COM_SETZEROPOS,
-                            RotaryEncoder.COM_ENABLE_ALLTHRESHOLDS,
                         ],
                     ),
                 ),
