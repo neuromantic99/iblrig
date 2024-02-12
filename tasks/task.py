@@ -3,10 +3,14 @@ This modules extends the base_tasks modules by providing task logic around the C
 """
 
 import abc
+from dataclasses import dataclass
 import json
 import sys
 import time
 from pathlib import Path
+from typing import List
+from dataclasses import asdict
+
 
 parent = Path(__file__).parent.parent
 sys.path.append(str(parent))
@@ -27,7 +31,33 @@ import yaml
 
 from iblrig.panda3d.corridor.corridor import Corridor
 
+
 log = setup_logger("iblrig")
+
+
+@dataclass
+class StateInfo:
+    name: str
+    start_time: float
+    end_time: float
+
+
+@dataclass
+class EventInfo:
+    name: str
+    start_time: float
+
+
+@dataclass
+class TrialInfo:
+    trial_start_time: float
+    trial_end_time: float
+    pc_timestamp: str
+    states_info: List[StateInfo]
+    events_info: List[EventInfo]
+    rotary_encoder_position: List[float]
+    texture: str
+    texture_rewarded: bool
 
 
 class IblBase(
@@ -68,6 +98,8 @@ class IblBase(
                 "RelativeHumidity": np.zeros(NTRIALS_INIT) * np.NaN,
             }
         )
+        self.texture = ""
+        self.texture_rewarded = False
 
     def start_hardware(self):
         """
@@ -86,8 +118,6 @@ class IblBase(
         :return:
         """
         # make the bpod send spacer signals to the main sync clock for protocol discovery
-
-        # This is the run
 
         self.send_spacers()
         time_last_trial_end = time.time()
@@ -113,16 +143,36 @@ class IblBase(
             self.trial_completed(self.bpod.session.current_trial.export())
 
             self.show_trial_log()
-            x = [
-                event
-                for event in self.bpod.session.current_trial.events_occurrences
-                if event.event_name == "Port1In"
-            ]
+
+            self.save_trial_data(i)
+
             while self.paths.SESSION_FOLDER.joinpath(".pause").exists():
                 time.sleep(1)
             if self.paths.SESSION_FOLDER.joinpath(".stop").exists():
                 self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
                 break
+
+    def save_trial_data(self, i: int) -> None:
+        trial = self.bpod.session.current_trial
+        trial_info = TrialInfo(
+            trial_start_time=trial.trial_start_timestamp,
+            trial_end_time=trial.trial_end_timestamp,
+            pc_timestamp=trial.pc_timestamp.isoformat(),
+            states_info=[
+                StateInfo(state.state_name, state.start_timestamp, state.end_timestamp)
+                for state in trial.states_occurrences
+            ],
+            events_info=[
+                EventInfo(event.event_name, event.host_timestamp)
+                for event in trial.events_occurrences
+            ],
+            rotary_encoder_position=self.rotary_encoder_position,
+            texture=self.texture,
+            texture_rewarded=self.texture_rewarded,
+        )
+
+        with open(self.paths.SESSION_FOLDER / f"trial{i}.json", "w") as f:
+            json.dump(asdict(trial_info), f)
 
     @abc.abstractmethod
     def next_trial(self):
@@ -228,18 +278,25 @@ class Session(IblBase):
         super().__init__(subject="steve")
         self.corridor_idx = -1
         self.corridor = Corridor()
+        # TODO:  pre-allocate this?
+        self.rotary_encoder_position: List[float] = []
+
         self.inject_corridor(self.corridor)
+        self.injection_rotary_encoder_position(self.rotary_encoder_position)
 
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
-        self.texture_idx = np.random.randint(0, 3)
-        texture = self.CORRIDOR_TEXTURES[self.texture_idx]
+        self.rotary_encoder_position = []
+        self.texture_idx = np.random.randint(0, len(self.CORRIDOR_TEXTURES))
+        self.texture_rewarded = self.texture_idx != 0
+        self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]
         self.device_rotary_encoder.reset_position()
         self.device_rotary_encoder.set_thresholds()
         self.trial_num += 1
         self.corridor_idx += 1
-        print(f"Starting trial with texture: {texture}")
-        self.corridor.start_trial(texture)
+        print(f"Starting trial with texture: {self.texture}")
+        self.corridor.start_trial(self.texture)
+        self.injection_rotary_encoder_position(self.rotary_encoder_position)
 
     def start_bpod(self):
         self.corridor.start()
@@ -249,9 +306,9 @@ class Session(IblBase):
     def get_state_machine_trial(self, i):
         # return self.open_and_close_valve(i)
         return (
-            self.get_state_machine_trial_unrewarded(i)
-            if self.texture_idx == 0
-            else self.get_state_machine_trial_rewarded(i)
+            self.get_state_machine_trial_rewarded(i)
+            if self.texture_rewarded
+            else self.get_state_machine_trial_unrewarded(i)
         )
 
     def get_state_machine_trial_unrewarded(self, i):
@@ -269,11 +326,11 @@ class Session(IblBase):
             state_name="reset_rotary_encoder",
             state_timer=0,
             output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "call_panda"},
+            state_change_conditions={"Tup": "trigger_panda"},
         )
 
         sma.add_state(
-            state_name="call_panda",
+            state_name="trigger_panda",
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
             state_change_conditions={"Tup": "transition"},
@@ -285,7 +342,7 @@ class Session(IblBase):
             state_change_conditions={
                 "RotaryEncoder1_1": "pseudo_reward_on",
                 "GlobalTimer1_End": "pseudo_reward_off",
-                "Tup": "call_panda",
+                "Tup": "trigger_panda",
             },
         )
 
@@ -369,11 +426,11 @@ class Session(IblBase):
             state_name="reset_rotary_encoder",
             state_timer=0,
             output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "call_panda"},
+            state_change_conditions={"Tup": "trigger_panda"},
         )
 
         sma.add_state(
-            state_name="call_panda",
+            state_name="trigger_panda",
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
             state_change_conditions={"Tup": "transition"},
@@ -385,7 +442,7 @@ class Session(IblBase):
             state_change_conditions={
                 "RotaryEncoder1_1": "reward_on",
                 "GlobalTimer1_End": "reward_off",
-                "Tup": "call_panda",
+                "Tup": "trigger_panda",
             },
         )
 

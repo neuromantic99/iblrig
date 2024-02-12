@@ -6,36 +6,29 @@ This module tries to be exclude task related logic
 
 import abc
 import argparse
+from typing import List
 import datetime
 import inspect
 import json
-import os
-import shutil
 import signal
-import subprocess
-import time
 import traceback
 from abc import ABC
 from pathlib import Path
 
-import numpy as np
 import scipy.interpolate
 import serial
 import yaml
-from pythonosc import udp_client
-
 import ibllib.io.session_params as ses_params
 import iblrig
 import iblrig.alyx
 import iblrig.graphic as graph
 import iblrig.path_helper
 import pybpodapi
-from iblrig import frame2TTL, sound
+from iblrig import frame2TTL
 from iblrig.hardware import (
     SOFTCODE,
     Bpod,
     MyRotaryEncoder,
-    sound_device_factory,
 )
 from iblrig.transfer_experiments import BehaviorCopier
 from iblutil.spacer import Spacer
@@ -546,8 +539,12 @@ class BpodMixin:
     def stop_mixin_bpod(self):
         self.bpod.close()
 
+    # These injections are not ideal but yolo, I didn't design the dumb mixin architecture
     def inject_corridor(self, corridor: Corridor):
         self.corridor = corridor
+
+    def injection_rotary_encoder_position(self, rotary_encoder_position: List[float]):
+        self.rotary_encoder_position = rotary_encoder_position
 
     def start_mixin_bpod(self):
         if self.hardware_settings["device_bpod"]["COM_BPOD"] is None:
@@ -580,7 +577,7 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
-                print(f"Current position: {position}")
+                self.rotary_encoder_position.append(position)
                 self.corridor.set_camera_position(position)
                 self.corridor.step()
             elif code == SOFTCODE.REWARD_ON:
