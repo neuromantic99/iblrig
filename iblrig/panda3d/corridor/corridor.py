@@ -10,36 +10,70 @@ from panda3d.core import (
     TextureStage,
 )
 
-NUM_TURNS_PER_LAP = 1
+import iblrig.path_helper
 
-DISTANCE_TO_REWARD_ZONE = 3000
-REWARD_ZONE_LENGTH = 500
-CORRIDOR_LENGTH = DISTANCE_TO_REWARD_ZONE + REWARD_ZONE_LENGTH
+
+HARDWARE_SETTINGS = iblrig.path_helper.load_settings_yaml("hardware_settings.yaml")
+
+
+DISTANCE_TO_REWARD_ZONE = HARDWARE_SETTINGS.corridor["DISTANCE_TO_REWARD_ZONE"]
+
+CORRIDOR_LENGTH_CM = HARDWARE_SETTINGS.corridor["CORRIDOR_LENGTH"]
+
+# End of the corridor is the same size as the field of view
+CORRIDOR_WIDTH = CORRIDOR_HEIGHT = 10
+
+# A screen is 1 unit. So the corridor in units should be it's length in cm / the screen width
+NUMBER_OF_SCREENS_IN_CORRIDOR = (
+    CORRIDOR_LENGTH_CM / HARDWARE_SETTINGS.screen["SCREEN_WIDTH"]
+)
+
+ASPECT_RATIO = (
+    HARDWARE_SETTINGS.screen["SCREEN_WIDTH_PX"]
+    / HARDWARE_SETTINGS.screen["SCREEN_HEIGHT_PX"]
+)
+
+# because the screen is wider than it is high, we need to compensate for this with the
+# length. Also need to multiply by the width to make the width 1 unit
+CORRIDOR_LENGTH = NUMBER_OF_SCREENS_IN_CORRIDOR * ASPECT_RATIO * CORRIDOR_WIDTH
+
+# Scale the actual screen that's rendered by a factor of two so you can drag it
+SCREEN_WIDTH_PX = int(HARDWARE_SETTINGS.screen["SCREEN_WIDTH_PX"] / 2)
+SCREEN_HEIGHT_PX = int(HARDWARE_SETTINGS.screen["SCREEN_HEIGHT_PX"] / 2)
+
+# Think about this
+CAMERA_HEIGHT = 1
 
 # Add a bit on the end to stop the mouse going out of the corridor backwards
-ADDITIONAL_BACKWARDS_LENGTH = 800
+ADDITIONAL_BACKWARDS_LENGTH = 0  # TODO increase but don't get confused
 
-CORRIDOR_WIDTH = 25
-CORRIDOR_HEIGHT = 25
+STOPPING_DISTANCE_FROM_END = (
+    1  # TODO: Should be the distance from the screen to the mouse (11cm) is it?
+)
 
-CAMERA_HEIGHT = 10
 # TODO: camera starts half out the back wall
 CAMERA_START_Y = int(CORRIDOR_LENGTH / 2) * -1
 
-STOPPING_DISTANCE_FROM_END = 50
+
+NUM_TURNS_PER_LAP = (
+    HARDWARE_SETTINGS.corridor["CORRIDOR_LENGTH"]
+    / HARDWARE_SETTINGS.corridor["WHEEL_DIAMETER"]
+)
 
 
 class Corridor(ShowBase):
     def __init__(self) -> None:
         ShowBase.__init__(self)
-        # Panda3d has this janky logic where it pollutes the global namespace.
-        # This helps pylance to not complain about it
-        # probably remove in production
-        base = builtins.base
-        base.disableMouse()
+        # self.render.set_scale(HARDWARE_SETTINGS.corridor["SCREEN_WIDTH"] / SCREEN_WIDTH)
 
         props = WindowProperties()
-        props.setSize(800, 600)
+        props.setSize(SCREEN_WIDTH_PX, SCREEN_HEIGHT_PX)
+
+        self.win.requestProperties(props)
+
+        # Panda3d has this janky logic where it pollutes the global namespace.
+        # So this is actually defined
+        base.disableMouse()
 
         self.left_window = self.openWindow(props, makeCamera=0)
         self.right_window = self.openWindow(props, makeCamera=0)
@@ -63,7 +97,7 @@ class Corridor(ShowBase):
         # If you want multiple textures in the same corridor
         # self.build_corridor(0, "blueTriangles.jpg", False)
         self.clear_corridor()  # Clear existing corridor before building a new one
-        self.build_corridor(0, True, wall_texture)
+        self.build_corridor(0, False, wall_texture)
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
         self.camera.lookAt(0, CORRIDOR_LENGTH, CAMERA_HEIGHT)
 
@@ -86,23 +120,24 @@ class Corridor(ShowBase):
     def set_camera_position(self, position: float) -> None:
         """Set camera position based on the number of
         full wheel rotations required to complete the corridor
-        TODO: This logic might be slightly odd because it completely ignores
-        the perimeter of the wheel
         """
+        print(f"possy: {position}")
         fraction_through_turn = position / 360
-        distance = (fraction_through_turn * DISTANCE_TO_REWARD_ZONE) / NUM_TURNS_PER_LAP
+        distance = (fraction_through_turn * CORRIDOR_LENGTH) / NUM_TURNS_PER_LAP
 
         set_camera_position = min(
             distance + CAMERA_START_Y, CORRIDOR_LENGTH / 2 - STOPPING_DISTANCE_FROM_END
         )
 
-        self.camera.setPos(0, set_camera_position, CAMERA_HEIGHT)
+        set_camera_position = distance + CAMERA_START_Y
+        print(f"camera pos {set_camera_position}")
+        self.camera.setPos(3.5, set_camera_position, CAMERA_HEIGHT)
 
     def step(self) -> None:
         self.taskMgr.step()
 
     def moveCameraTask(self, task: Any) -> Task.cont:
-        speed = 400
+        speed = 10
         dt = globalClock.getDt()  # Get the actual delta time
 
         if self.mouseWatcherNode.is_button_down(KeyboardButton.up()):
@@ -196,4 +231,8 @@ class Corridor(ShowBase):
 
 if __name__ == "__main__":
     corridor = Corridor()
+    corridor.set_camera_position(10)
+    corridor.build_corridor(
+        0, True, "blueTriangles.jpg", "blueTriangles.jpg", "black.png"
+    )
     corridor.run()

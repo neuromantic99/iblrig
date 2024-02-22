@@ -18,10 +18,16 @@ import sounddevice as sd
 from serial.tools import list_ports
 from iblrig.rotary_encoder_module import RotaryEncoderModule
 
+import iblrig.path_helper
+
+
 from iblrig.tools import static_vars
 from iblutil.util import Bunch, setup_logger
 from pybpod_rotaryencoder_module.module import RotaryEncoder
 from pybpodapi.bpod.bpod_io import BpodIO
+
+HARDWARE_SETTINGS = iblrig.path_helper.load_settings_yaml("hardware_settings.yaml")
+
 
 SOFTCODE = IntEnum(
     "SOFTCODE",
@@ -239,14 +245,13 @@ class MyRotaryEncoder:
     def __init__(self, gain, com, connect=False):
         self.RE_PORT = com
         self.connected = False
-        # Change me
-        self.WHEEL_PERIM = 31 * 2 * np.pi  # = 194,778744523
-        self.deg_mm = 360 / self.WHEEL_PERIM
-        self.mm_deg = self.WHEEL_PERIM / 360
-        self.factor = 1
-
-        # How many degrees to turn forward before triggering the end of the trial
-        self.SET_THRESHOLDS = [360]
+        # How many degrees to turn forward before triggering the reward
+        position_at_reward = (
+            HARDWARE_SETTINGS.corridor["DISTANCE_TO_REWARD_ZONE"]
+            / HARDWARE_SETTINGS.corridor["WHEEL_DIAMETER"]
+            * 360
+        )
+        self.SET_THRESHOLDS = [position_at_reward]
         self.ENABLE_THRESHOLDS = [True] * len(self.SET_THRESHOLDS)
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
         while len(self.ENABLE_THRESHOLDS) < 8:
@@ -290,13 +295,6 @@ class MyRotaryEncoder:
             return None
         return self.rotary_encoder.current_position()
 
-    @staticmethod
-    def angle_change(angle1: float, angle2: float) -> float:
-        """Angle is from -180 to 180 degrees. Deals with the angle jump from 180 to -180.
-        Probably deprecate as we don't wrap the encoder anymore"""
-
-        return (angle2 - angle1 + 180) % 360 - 180
-
 
 def sound_device_factory(output="sysdefault", samplerate=None):
     """
@@ -332,7 +330,7 @@ def sound_device_factory(output="sysdefault", samplerate=None):
         channels = "stereo"
     else:
         raise ValueError(
-            f"{output} soundcard is neither xonar, harp or sysdefault. Fix your hardware_settings.yam"
+            f"{output} soundcard is neither xonar, harp or sysdefault. Fix your hardware_settings.yaml"
         )
     return sd, samplerate, channels
 
