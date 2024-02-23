@@ -19,7 +19,7 @@ DISTANCE_TO_REWARD_ZONE = HARDWARE_SETTINGS.corridor["DISTANCE_TO_REWARD_ZONE"]
 
 CORRIDOR_LENGTH_CM = HARDWARE_SETTINGS.corridor["CORRIDOR_LENGTH"]
 
-# Arbitary length backwards to stop mouse falling out the back of the corridor
+# Arbitary large length backwards to stop mouse falling out the back of the corridor
 ADDITIONAL_BACKWARDS_LENGTH = 1000
 
 # End of the corridor is the same size as the field of view
@@ -46,9 +46,6 @@ SCREEN_HEIGHT_PX = int(HARDWARE_SETTINGS.screen["SCREEN_HEIGHT_PX"] / 2)
 # Think about this
 CAMERA_HEIGHT = 1
 
-# TODO: Currently the camera stops moving an arbitary distance from the end to simulate
-# collision logic. Can be handled with panda collision logic but this is quite complex
-STOPPING_DISTANCE_FROM_END = 5
 
 # TODO: camera starts half out the back wall
 CAMERA_START_Y = (CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH) / 2 - CORRIDOR_LENGTH
@@ -97,12 +94,35 @@ class Corridor(ShowBase):
         # self.build_corridor(0, "blueTriangles.jpg", False)
         self.clear_corridor()  # Clear existing corridor before building a new one
         self.build_corridor(
-            0,
             CORRIDOR_WIDTH,
             CORRIDOR_HEIGHT,
             CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH,
             False,
             wall_texture,
+        )
+
+        for landmark_pos in HARDWARE_SETTINGS.corridor["LANDMARK_POSITIONS"]:
+
+            self.add_landmark(
+                y_pos=CAMERA_START_Y
+                + (landmark_pos / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
+                width=CORRIDOR_WIDTH,
+                height=CORRIDOR_HEIGHT,
+                length=int(
+                    HARDWARE_SETTINGS.corridor["LANDMARK_WIDTH"]
+                    / CORRIDOR_LENGTH_CM
+                    * CORRIDOR_LENGTH
+                ),
+                texture_name="checkers.jpg",
+            )
+
+        # Debugging purposes: mark the reward zone
+        self.add_landmark(
+            y_pos=CAMERA_START_Y + (180 / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
+            width=CORRIDOR_WIDTH,
+            height=CORRIDOR_HEIGHT,
+            length=1,
+            texture_name="black.png",
         )
 
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
@@ -120,7 +140,6 @@ class Corridor(ShowBase):
         """Jump the camera outside the corridor for the ITI"""
         self.clear_corridor()
         self.build_corridor(
-            0,
             CORRIDOR_WIDTH,
             CORRIDOR_HEIGHT,
             CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH,
@@ -146,11 +165,11 @@ class Corridor(ShowBase):
         set_camera_position = min(
             distance + CAMERA_START_Y,
             (CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH) / 2
-            - STOPPING_DISTANCE_FROM_END,
+            - HARDWARE_SETTINGS.corridor["STOPPING_DISTANCE_FROM_END"],
         )
 
         print(f"camera pos {set_camera_position}")
-        self.camera.setPos(3.5, set_camera_position, CAMERA_HEIGHT)
+        self.camera.setPos(0, set_camera_position, CAMERA_HEIGHT)
 
     def step(self) -> None:
         self.taskMgr.step()
@@ -166,9 +185,42 @@ class Corridor(ShowBase):
 
         return Task.cont
 
+    def add_landmark(
+        self, y_pos: int, width: int, height: int, length: int, texture_name: str
+    ):
+        cm = CardMaker("corridor_segment")
+        cm.setFrame(
+            -length / 2,
+            length / 2,
+            -height / 2,
+            height / 2,
+        )
+
+        offset_from_wall = 0.1
+
+        left_wall = self.render.attachNewNode(cm.generate())
+        left_wall.setPos(-width / 2 + offset_from_wall, y_pos, height / 2)
+        left_wall.setH(90)
+
+        right_wall = self.render.attachNewNode(cm.generate())
+        right_wall.setPos(width / 2 - offset_from_wall, y_pos, height / 2)
+        right_wall.setH(-90)
+
+        for model in [left_wall, right_wall]:
+            texture = self.loader.load_texture(
+                f"iblrig/panda3d/corridor/textures/{texture_name}"
+            )
+
+            model.setTexture(texture, 1)
+            model.setTwoSided(True)
+            model.reparentTo(self.render)
+            num_texture_tiles = max(1, int(length / height))
+            model.setTexScale(TextureStage.getDefault(), num_texture_tiles, 1)
+
+            self.corridor_nodes.append(model)
+
     def build_corridor(
         self,
-        y_offset: int,
         width: int,
         height: int,
         length: int,
@@ -189,11 +241,11 @@ class Corridor(ShowBase):
             length / 2,
         )
         corridor["floor"] = self.render.attachNewNode(cm.generate())
-        corridor["floor"].setPos(0, y_offset, 0)
+        corridor["floor"].setPos(0, 0, 0)
         corridor["floor"].setP(-90)
 
         corridor["ceiling"] = self.render.attachNewNode(cm.generate())
-        corridor["ceiling"].setPos(0, y_offset, height)
+        corridor["ceiling"].setPos(0, 0, height)
         corridor["ceiling"].setP(-90)
 
         # Side Walls
@@ -205,11 +257,11 @@ class Corridor(ShowBase):
         )
 
         corridor["left_wall"] = self.render.attachNewNode(cm.generate())
-        corridor["left_wall"].setPos(-width / 2, y_offset, height / 2)
+        corridor["left_wall"].setPos(-width / 2, 0, height / 2)
         corridor["left_wall"].setH(90)
 
         corridor["right_wall"] = self.render.attachNewNode(cm.generate())
-        corridor["right_wall"].setPos(width / 2, y_offset, height / 2)
+        corridor["right_wall"].setPos(width / 2, 0, height / 2)
         corridor["right_wall"].setH(-90)
 
         # Front and back
@@ -222,17 +274,17 @@ class Corridor(ShowBase):
 
         if add_back_wall:
             corridor["back_wall"] = self.render.attachNewNode(cm.generate())
-            corridor["back_wall"].setPos(0, length / 2 + y_offset, height / 2)
+            corridor["back_wall"].setPos(0, length / 2, height / 2)
             corridor["back_wall"].setH(180)
 
         for model_name, model in corridor.items():
-            texture_path = (
+            texture_name = (
                 floor_texture
                 if model_name in ["floor", "ceiling"]
                 else back_wall_texture if model_name == "back_wall" else wall_texture
             )
             texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{texture_path}"
+                f"iblrig/panda3d/corridor/textures/{texture_name}"
             )
 
             model.setTexture(texture, 1)
@@ -254,7 +306,6 @@ if __name__ == "__main__":
     corridor.set_camera_position(10)
 
     corridor.build_corridor(
-        0,
         CORRIDOR_WIDTH,
         CORRIDOR_HEIGHT,
         CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH,

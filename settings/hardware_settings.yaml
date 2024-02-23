@@ -45,10 +45,10 @@ corridor:
   WHEEL_DIAMETER: 48
   DISTANCE_TO_REWARD_ZONE: 180
   CORRIDOR_LENGTH: 200
-  # TODO:
-  # Add a bit on the end to stop the mouse going out of the corridor backwards
-  # ADDITIONAL_BACKWARDS_LENGTH: 10
-  # How far away does from the wall does the mouse get before collision
-  # TODO: maybe do this with inbuilt collision logic in panda
-  # STOPPING_DISTANCE_FROM_END: 50
+  # TODO: Currently the camera stops moving an arbitary distance from the end to simulate
+  # collision logic. Can be handled with panda collision logic but this is quite complex
+  STOPPING_DISTANCE_FROM_END: 5
+  LANDMARK_POSITIONS: [45, 90, 135]
+  LANDMARK_WIDTH: 10
+
 VERSION: 1.0.0
