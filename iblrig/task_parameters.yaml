@@ -7,6 +7,7 @@
 "REWARD_TYPE": Water 10% Sucrose
 "USE_AUTOMATIC_STOPPING_CRITERIONS": true
 "REWARD_ZONE_TIME": 1.5
+"MAX_TRIAL_TIME": 10
 "ITI_LENGTH": 3
 "NUMBER_TURNS_TO_REWARD": 2
 # Going too high takes a while to trigger the RotaryEncoder_1 event

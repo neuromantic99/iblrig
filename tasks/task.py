@@ -311,15 +311,91 @@ class Session(IblBase):
             else self.get_state_machine_trial_unrewarded(i)
         )
 
+    def get_state_machine_trial_rewarded(self, i):
+        sma = StateMachine(self.bpod)
+        sma.set_global_timer(1, self.task_params.MAX_TRIAL_TIME)
+        sma.set_global_timer(2, self.task_params.REWARD_ZONE_TIME)
+
+        sma.add_state(
+            state_name="trial_start_rewarded",
+            state_timer=0,
+            state_change_conditions={"Tup": "reset_rotary_encoder"},
+            output_actions=[
+                ("PWM1", 0),
+                ("GlobalTimerTrig", 1),
+            ],
+        )
+
+        sma.add_state(
+            state_name="reset_rotary_encoder",
+            state_timer=0,
+            output_actions=[self.bpod.actions.rotary_encoder_reset],
+            state_change_conditions={"Tup": "trigger_panda"},
+        )
+
+        sma.add_state(
+            state_name="trigger_panda",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA), ("PWM1", 0)],
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="transition",
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
+            state_change_conditions={
+                "RotaryEncoder1_1": "reward_on",
+                "GlobalTimer1_End": "exit",
+                "GlobalTimer2_End": "reward_off",
+                "Tup": "trigger_panda",
+            },
+            output_actions=[("PWM1", 255)],
+        )
+
+        # TODO: This may need to be called multiple times if you don't want to hold the spout open for
+        # the whole time
+        sma.add_state(
+            state_name="reward_on",
+            # Needs a few ms to turn the reward on. This could be lengthed if causing issues, mouse won't notice
+            # screen freezing for 10ms while it's rewarded
+            state_timer=0.01,
+            output_actions=[
+                ("Valve1", 255),
+                ("GlobalTimerTrig", 2),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "transition"},
+        )
+
+        sma.add_state(
+            state_name="reward_off",
+            # Timer as above
+            state_timer=0.01,
+            output_actions=[("SoftCode", SOFTCODE.ITI), ("Valve1", 0)],
+            state_change_conditions={"Tup": "ITI"},
+        )
+
+        sma.add_state(
+            state_name="ITI",
+            state_timer=self.task_params.ITI_LENGTH,
+            state_change_conditions={"Tup": "exit"},
+        )
+
+        return sma
+
     def get_state_machine_trial_unrewarded(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, self.task_params.REWARD_ZONE_TIME)
+
+        sma.set_global_timer(1, self.task_params.MAX_TRIAL_TIME)
+        sma.set_global_timer(2, self.task_params.REWARD_ZONE_TIME)
 
         sma.add_state(
             state_name="trial_start_unrewarded",
             state_timer=0,
             state_change_conditions={"Tup": "reset_rotary_encoder"},
-            output_actions=[("PWM1", 0)],
+            output_actions=[
+                ("PWM1", 0),
+                ("GlobalTimerTrig", 1),
+            ],
         )
 
         sma.add_state(
@@ -341,7 +417,8 @@ class Session(IblBase):
             state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 "RotaryEncoder1_1": "pseudo_reward_on",
-                "GlobalTimer1_End": "pseudo_reward_off",
+                "GlobalTimer1_End": "exit",
+                "GlobalTimer2_End": "pseudo_reward_off",
                 "Tup": "trigger_panda",
             },
         )
@@ -349,7 +426,7 @@ class Session(IblBase):
         sma.add_state(
             state_name="pseudo_reward_on",
             state_timer=0.01,
-            output_actions=[("BNC1", 255), ("GlobalTimerTrig", 1)],  # To FPGA
+            output_actions=[("BNC1", 255), ("GlobalTimerTrig", 2)],  # To FPGA
             state_change_conditions={"Tup": "transition"},
         )
 
@@ -385,12 +462,8 @@ class Session(IblBase):
             state_name="open",
             state_timer=1,
             output_actions=[
-                # ("Valve", 1),
                 ("Valve1", 255),
-                # ("ValveState", 1),
-                # ("ValveState", 4),
-                # ("BNC1", 255),
-            ],  # To FPGA
+            ],
             state_change_conditions={
                 "Tup": "close",
                 "GlobalTimer1_End": "exit",
@@ -404,76 +477,9 @@ class Session(IblBase):
                 "Tup": "open",
             },
             output_actions=[
-                # ("Valve", 1),
                 ("Valve1", 0),
-                # ("BNC1", 255),
-            ],  # To FPGA
+            ],
         )
-        return sma
-
-    def get_state_machine_trial_rewarded(self, i):
-        sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, self.task_params.REWARD_ZONE_TIME)
-
-        sma.add_state(
-            state_name="trial_start_rewarded",
-            state_timer=0,
-            state_change_conditions={"Tup": "reset_rotary_encoder"},
-            output_actions=[("PWM1", 0)],
-        )
-
-        sma.add_state(
-            state_name="reset_rotary_encoder",
-            state_timer=0,
-            output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "trigger_panda"},
-        )
-
-        sma.add_state(
-            state_name="trigger_panda",
-            state_timer=0,
-            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
-            state_change_conditions={"Tup": "transition"},
-        )
-
-        sma.add_state(
-            state_name="transition",
-            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
-            state_change_conditions={
-                "RotaryEncoder1_1": "reward_on",
-                "GlobalTimer1_End": "reward_off",
-                "Tup": "trigger_panda",
-            },
-        )
-
-        # TODO: This may need to be called multiple times if you don't want to hold the spout open for
-        # the whole time
-        sma.add_state(
-            state_name="reward_on",
-            # Needs a few ms to turn the reward on. This could be lengthed if causing issues, mouse won't notice
-            # screen freezing for 10ms while it's rewarded
-            state_timer=0.01,
-            output_actions=[
-                ("Valve1", 255),
-                ("GlobalTimerTrig", 1),
-            ],  # To FPGA
-            state_change_conditions={"Tup": "transition"},
-        )
-
-        sma.add_state(
-            state_name="reward_off",
-            # Timer as above
-            state_timer=0.01,
-            output_actions=[("SoftCode", SOFTCODE.ITI), ("Valve1", 0)],
-            state_change_conditions={"Tup": "ITI"},
-        )
-
-        sma.add_state(
-            state_name="ITI",
-            state_timer=self.task_params.ITI_LENGTH,
-            state_change_conditions={"Tup": "exit"},
-        )
-
         return sma
 
 
