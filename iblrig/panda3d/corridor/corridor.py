@@ -137,7 +137,7 @@ class Corridor(ShowBase):
         self.corridor_nodes.clear()
 
     def ITI(self) -> None:
-        """Jump the camera outside the corridor for the ITI"""
+        """Build a completely black corridor"""
         self.clear_corridor()
         self.build_corridor(
             CORRIDOR_WIDTH,

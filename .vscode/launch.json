@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "run task",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "tasks/task.py",
       "console": "integratedTerminal",
@@ -14,8 +14,20 @@
       "justMyCode": true
     },
     {
+      "name": "run habituation",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "tasks/habituation_task.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    },
+    {
       "name": "run panda.py",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/iblrig/panda3d/corridor/corridor.py",
       "console": "integratedTerminal",

@@ -37,8 +37,8 @@ SOFTCODE = IntEnum(
         "PLAY_NOISE",
         "TRIGGER_CAMERA",
         "TRIGGER_PANDA",
+        "STORE_ENCODER_POSITION",
         "ITI",
-        "REWARD_ON",
     ],
 )
 

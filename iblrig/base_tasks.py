@@ -580,10 +580,11 @@ class BpodMixin:
                 self.rotary_encoder_position.append(position)
                 self.corridor.set_camera_position(position)
                 self.corridor.step()
-            elif code == SOFTCODE.REWARD_ON:
-                print("Reward triggered mate")
+            elif code == SOFTCODE.STORE_ENCODER_POSITION:
+                # It would be better to do this with an output stream
+                position = self.device_rotary_encoder.rotary_encoder.current_position()
+                self.rotary_encoder_position.append(position)
             elif code == SOFTCODE.ITI:
-                print("ITI triggered mate")
                 self.corridor.ITI()
                 self.corridor.step()
 

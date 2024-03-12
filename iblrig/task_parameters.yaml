@@ -2,14 +2,15 @@
 "ADAPTIVE_REWARD": false
 "CALIBRATION_VALUE": 0.067
 "CONTRAST_SET": [1.0, 0.25, 0.125, 0.0625, 0.0]
-"NTRIALS": 1
+"NTRIALS": 2
 "REWARD_AMOUNT_UL": 1.5
 "REWARD_TYPE": Water 10% Sucrose
 "USE_AUTOMATIC_STOPPING_CRITERIONS": true
+"SOLENOID_OPEN_TIME": 0.1
 "REWARD_ZONE_TIME": 1.5
-"MAX_TRIAL_TIME": 10
+"MAX_TRIAL_TIME": 600
 "ITI_LENGTH": 3
-"NUMBER_TURNS_TO_REWARD": 2
-# Going too high takes a while to trigger the RotaryEncoder_1 event
-# review when plugged into setup
-"SCREEN_REFRESH_RATE": 60 # Hz
+# The ITI trigger doesn't work if you go to 60 hz.
+# If you want to go this fast, an alternative method is to
+# freeze the screen while the mouse receives the reward.
+"SCREEN_REFRESH_RATE": 30 # Hz
