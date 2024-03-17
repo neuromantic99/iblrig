@@ -43,78 +43,57 @@ class Session(IblBase):
     def __init__(self, subject: str) -> None:
         self.protocol_name = "habitutation"
         super().__init__(subject=subject)
-        self.rotary_encoder_position: List[float] = []
-        self.injection_rotary_encoder_position(self.rotary_encoder_position)
 
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
         self.rotary_encoder_position = []
         self.trial_num += 1
 
-    def start_bpod(self):
+    def start_bpod(self):  #
+        # self.device_rotary_encoder.rotary_encoder.close()
         self.run()
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 5)
-        sma.set_global_timer(2, 25)
+        sma.set_global_timer(1, 1)
 
         sma.add_state(
-            state_name="trial_start",
+            state_name="start",
             state_timer=0,
-            state_change_conditions={"Tup": "reset_rotary_encoder"},
-            output_actions=[
-                ("GlobalTimerTrig", 1),
-            ],
-        )
-
-        sma.add_state(
-            state_name="reset_rotary_encoder",
-            state_timer=0,
-            output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "store_encoder_position"},
-        )
-
-        sma.add_state(
-            state_name="store_encoder_position",
-            state_timer=0,
-            output_actions=[("SoftCode", SOFTCODE.STORE_ENCODER_POSITION)],
-            state_change_conditions={"Tup": "transition"},
-        )
-
-        sma.add_state(
-            state_name="transition",
-            state_timer=1 / 10,
+            output_actions=[("GlobalTimerTrig", 1)],
             state_change_conditions={
-                "GlobalTimer1_End": "reward_on",
-                "GlobalTimer2_End": "exit",
-                "Tup": "store_encoder_position",
+                "Tup": "open",
             },
         )
 
         sma.add_state(
-            state_name="reward_on",
+            state_name="open",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
                 ("Valve1", 255),
-                ("GlobalTimerTrig", 2),
-            ],  # To FPGA
-            state_change_conditions={"Tup": "reward_off"},
+            ],
+            state_change_conditions={
+                "GlobalTimer1_End": "exit",
+                "Tup": "close",
+            },
         )
 
         sma.add_state(
-            state_name="reward_off",
-            # Short timer to actually send voltage to solenoid
-            state_timer=0.001,
-            output_actions=[("Valve1", 0)],
-            state_change_conditions={"Tup": "transition"},
+            state_name="close",
+            state_timer=0.5 - self.task_params.SOLENOID_OPEN_TIME,
+            state_change_conditions={"GlobalTimer1_End": "exit", "Tup": "open"},
+            output_actions=[
+                ("Valve1", 0),
+            ],
         )
-
         return sma
 
 
 if __name__ == "__main__":  # pragma: no cover
 
-    subject = input("Enter mouse id:\n\n")
-    session = Session(subject)
+    session = Session("")
     session.start_bpod()
+    # Required to close the connection to the RE and not have to
+    # replug USB on next run
+    session.device_rotary_encoder.rotary_encoder.disable_stream()
+    session.device_rotary_encoder.rotary_encoder.close()

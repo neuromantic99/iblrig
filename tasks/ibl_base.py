@@ -131,7 +131,7 @@ class IblBase(
             time_last_trial_end = time.time()
             self.trial_completed(self.bpod.session.current_trial.export())
 
-            self.show_trial_log()
+            # self.show_trial_log()
 
             self.save_trial_data(i)
 

@@ -145,43 +145,6 @@ class Session(IblBase):
 
         return sma
 
-    def open_and_close_valve(self, i):
-        sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 10)
-
-        sma.add_state(
-            state_name="start",
-            state_timer=1,
-            output_actions=[("GlobalTimerTrig", 1)],
-            state_change_conditions={
-                "Tup": "open",
-            },
-        )
-
-        sma.add_state(
-            state_name="open",
-            state_timer=1,
-            output_actions=[
-                ("Valve1", 255),
-            ],
-            state_change_conditions={
-                "Tup": "close",
-                "GlobalTimer1_End": "exit",
-            },
-        )
-
-        sma.add_state(
-            state_name="close",
-            state_timer=1,
-            state_change_conditions={
-                "Tup": "open",
-            },
-            output_actions=[
-                ("Valve1", 0),
-            ],
-        )
-        return sma
-
 
 if __name__ == "__main__":  # pragma: no cover
     session = Session()

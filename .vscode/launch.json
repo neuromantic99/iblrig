@@ -26,6 +26,18 @@
       "justMyCode": true
     },
     {
+      "name": "run solenoid",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "tasks/calibrate_solenoid.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    },
+    {
       "name": "run panda.py",
       "type": "debugpy",
       "request": "launch",
