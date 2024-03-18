@@ -55,12 +55,14 @@ class Session(IblBase):
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        sma.set_global_timer(1, 1)
-
+        # 1st number is the timer (currently we only have one), 2nd number is the timer length (1s)
+        timer_number = 1
+        timer_length = 1
+        sma.set_global_timer(timer_number, timer_length)
         sma.add_state(
             state_name="start",
             state_timer=0,
-            output_actions=[("GlobalTimerTrig", 1)],
+            output_actions=[("GlobalTimerTrig", timer_number)],
             state_change_conditions={
                 "Tup": "open",
             },
@@ -70,7 +72,7 @@ class Session(IblBase):
             state_name="open",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", 255),
+                ("Valve1", 255),  # 255 is the voltage that you send to the solenoid
             ],
             state_change_conditions={
                 "GlobalTimer1_End": "exit",
@@ -80,10 +82,11 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="close",
-            state_timer=0.5 - self.task_params.SOLENOID_OPEN_TIME,
+            state_timer=0.5
+            - self.task_params.SOLENOID_OPEN_TIME,  # 0.5 seconds so faster calibration
             state_change_conditions={"GlobalTimer1_End": "exit", "Tup": "open"},
             output_actions=[
-                ("Valve1", 0),
+                ("Valve1", 0),  # set solenoid voltage to 0
             ],
         )
         return sma
