@@ -35,9 +35,8 @@ with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
 
 class Session(IblBase):
     CORRIDOR_TEXTURES = [
-        "verticalGrating.jpg",
-        "pinkBars.png",
-        "blueTriangles.jpg",
+        "blackBars.png",
+        "blackAndWhiteCircles.png",
     ]
 
     def __init__(self) -> None:

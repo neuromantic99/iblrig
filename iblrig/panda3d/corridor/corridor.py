@@ -97,7 +97,7 @@ class Corridor(ShowBase):
             CORRIDOR_WIDTH,
             CORRIDOR_HEIGHT,
             CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH,
-            False,
+            True,
             wall_texture,
         )
 
@@ -113,7 +113,7 @@ class Corridor(ShowBase):
                     / CORRIDOR_LENGTH_CM
                     * CORRIDOR_LENGTH
                 ),
-                texture_name="checkers.jpg",
+                texture_name="grey.png",
             )
 
         # Debugging purposes: mark the reward zone
@@ -196,7 +196,7 @@ class Corridor(ShowBase):
             height / 2,
         )
 
-        offset_from_wall = 0.1
+        offset_from_wall = 0.01
 
         left_wall = self.render.attachNewNode(cm.generate())
         left_wall.setPos(-width / 2 + offset_from_wall, y_pos, height / 2)
@@ -206,7 +206,18 @@ class Corridor(ShowBase):
         right_wall.setPos(width / 2 - offset_from_wall, y_pos, height / 2)
         right_wall.setH(-90)
 
-        for model in [left_wall, right_wall]:
+        cm.setFrame(
+            -width / 2,
+            width / 2,
+            -length / 2,
+            length / 2,
+        )
+
+        floor = self.render.attachNewNode(cm.generate())
+        floor.setPos(0, y_pos, offset_from_wall)
+        floor.setP(-90)
+
+        for model in [left_wall, right_wall, floor]:
             texture = self.loader.load_texture(
                 f"iblrig/panda3d/corridor/textures/{texture_name}"
             )
@@ -305,13 +316,30 @@ if __name__ == "__main__":
     corridor = Corridor()
     corridor.set_camera_position(10)
 
+    # wall_texture = "blackTriangles.png"
+    # wall_texture = "blackAndWhiteCircles.png"
+    wall_texture = "blackBars.png"
+
     corridor.build_corridor(
         CORRIDOR_WIDTH,
         CORRIDOR_HEIGHT,
         CORRIDOR_LENGTH + ADDITIONAL_BACKWARDS_LENGTH,
         True,
-        "blueTriangles.jpg",
-        "blueTriangles.jpg",
-        "black.png",
+        wall_texture,
     )
+
+    for landmark_pos in HARDWARE_SETTINGS.corridor["LANDMARK_POSITIONS"]:
+        corridor.add_landmark(
+            y_pos=CAMERA_START_Y
+            + (landmark_pos / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
+            width=CORRIDOR_WIDTH,
+            height=CORRIDOR_HEIGHT,
+            length=int(
+                HARDWARE_SETTINGS.corridor["LANDMARK_WIDTH"]
+                / CORRIDOR_LENGTH_CM
+                * CORRIDOR_LENGTH
+            ),
+            texture_name="endOfCorridor.png",
+        )
+
     corridor.run()
