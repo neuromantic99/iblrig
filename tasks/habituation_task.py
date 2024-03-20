@@ -2,27 +2,24 @@
 This modules extends the base_tasks modules by providing task logic around the Choice World protocol
 """
 
-from dataclasses import dataclass
-import sys
 from pathlib import Path
 from typing import List
 
+import yaml
+
+
+from path_helper import path_helper
+
+# Allows you to import from tasks
+path_helper()
+
 from tasks.ibl_base import IblBase
-
-
-parent = Path(__file__).parent.parent
-sys.path.append(str(parent))
 
 
 from iblutil.util import setup_logger
 from pybpodapi.protocol import StateMachine
 
 from iblrig.hardware import SOFTCODE
-
-
-import yaml
-
-from iblrig.panda3d.corridor.corridor import Corridor
 
 
 log = setup_logger("iblrig")
@@ -112,3 +109,7 @@ class Session(IblBase):
 if __name__ == "__main__":  # pragma: no cover
     session = Session(SUBJECT_PARAMETERS.subject_id)
     session.start_bpod()
+    # Required to close the connection to the RE and not have to
+    # replug USB on next run
+    session.device_rotary_encoder.rotary_encoder.disable_stream()
+    session.device_rotary_encoder.rotary_encoder.close()

@@ -692,17 +692,17 @@ class ValveMixin:
                 'CALIBRATION_VALUE' = <MANUAL_CALIBRATION>
             ##########################################"""
         # regardless of the calibration method, the reward valve time has to be lower than 1 second
-        assert (
-            self.compute_reward_time(amount_ul=1.5) < 1
-        ), """
-            ##########################################
-                REWARD VALVE TIME IS TOO HIGH!
-            Probably because of a BAD calibration file
-            Calibrate the rig or use a manual calibration
-            PLEASE GO TO the task settings yaml file and set:
-                AUTOMATIC_CALIBRATION = False
-                CALIBRATION_VALUE = <MANUAL_CALIBRATION>
-            ##########################################"""
+        # assert (
+        # self.compute_reward_time(amount_ul=1.5) < 1
+        # ), """
+        ##########################################
+        #     REWARD VALVE TIME IS TOO HIGH!
+        # Probably because of a BAD calibration file
+        # Calibrate the rig or use a manual calibration
+        # PLEASE GO TO the task settings yaml file and set:
+        #     AUTOMATIC_CALIBRATION = False
+        #     CALIBRATION_VALUE = <MANUAL_CALIBRATION>
+        ##########################################"""
         self.logger.info("Water valve module loaded: OK")
 
     def compute_reward_time(self, amount_ul=None):

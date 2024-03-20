@@ -2,10 +2,13 @@
 This modules extends the base_tasks modules by providing task logic around the Choice World protocol
 """
 
-from dataclasses import dataclass
+from path_helper import path_helper
+
+# Allows you to import from tasks
+path_helper()
+
 import sys
 from pathlib import Path
-from typing import List
 
 from tasks.ibl_base import IblBase
 

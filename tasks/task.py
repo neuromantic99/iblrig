@@ -2,15 +2,15 @@
 This modules extends the base_tasks modules by providing task logic around the Choice World protocol
 """
 
-import sys
+from matplotlib import pyplot as plt
+from path_helper import path_helper
+
+path_helper()
+
 from pathlib import Path
-from typing import List
+from typing import Iterable, List
 
 from tasks.habituation_task import IblBase
-
-
-parent = Path(__file__).parent.parent
-sys.path.append(str(parent))
 
 
 import numpy as np

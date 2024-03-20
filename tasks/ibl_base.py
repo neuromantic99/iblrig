@@ -11,6 +11,7 @@ from dataclasses import asdict
 parent = Path(__file__).parent.parent
 sys.path.append(str(parent))
 
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -89,6 +90,7 @@ class IblBase(
         )
         self.texture = ""
         self.texture_rewarded = False
+        self.all_licks = []
 
     def start_hardware(self):
         """
@@ -131,9 +133,9 @@ class IblBase(
             time_last_trial_end = time.time()
             self.trial_completed(self.bpod.session.current_trial.export())
 
-            # self.show_trial_log()
-
-            self.save_trial_data(i)
+            trial_info = self.format_data()
+            self.save_trial_data(trial_info, i)
+            self.plot_session(trial_info, i)
 
             while self.paths.SESSION_FOLDER.joinpath(".pause").exists():
                 time.sleep(1)
@@ -141,9 +143,18 @@ class IblBase(
                 self.paths.SESSION_FOLDER.joinpath(".stop").unlink()
                 break
 
-    def save_trial_data(self, i: int) -> None:
+    def plot_session(self, trial_info: TrialInfo, i: int):
+        licks = [
+            event.start_time
+            for event in trial_info.events_info
+            if event.name == "Port1In"
+        ]
+        self.all_licks.append(licks)
+        plot_licks(self.all_licks)
+
+    def format_data(self) -> TrialInfo:
         trial = self.bpod.session.current_trial
-        trial_info = TrialInfo(
+        return TrialInfo(
             trial_start_time=trial.trial_start_timestamp,
             trial_end_time=trial.trial_end_timestamp,
             pc_timestamp=trial.pc_timestamp.isoformat(),
@@ -160,6 +171,7 @@ class IblBase(
             texture_rewarded=self.texture_rewarded,
         )
 
+    def save_trial_data(self, trial_info: TrialInfo, i: int) -> None:
         with open(self.paths.SESSION_FOLDER / f"trial{i}.json", "w") as f:
             json.dump(asdict(trial_info), f)
 
@@ -248,3 +260,18 @@ TIME FROM START:      {self.time_elapsed}
     @property
     def event_reward(self):
         return self.device_rotary_encoder.THRESHOLD_EVENTS[-self.position]
+
+
+def plot_licks(all_licks: List) -> None:
+
+    plt.axis((0, 30, 0, len(all_licks) + 2))
+
+    plt.ion()
+    plt.show()
+
+    for idx, licks in enumerate(all_licks):
+
+        plt.plot(licks, np.ones(len(licks)) + idx, ".")
+        plt.title(f"Number of trials: {len(all_licks)}")
+        plt.draw()
+        plt.pause(0.01)
