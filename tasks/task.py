@@ -28,9 +28,8 @@ from iblrig.panda3d.corridor.corridor import Corridor
 log = setup_logger("iblrig")
 
 
-# read defaults from task_parameters.yaml
-with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
-    DEFAULTS = yaml.safe_load(f)
+with open(Path(__file__).parent.joinpath("subject_parameters.yaml")) as f:
+    SUBJECT_PARAMETERS = yaml.safe_load(f)
 
 
 class Session(IblBase):
@@ -39,9 +38,9 @@ class Session(IblBase):
         "blackAndWhiteCircles.png",
     ]
 
-    def __init__(self) -> None:
+    def __init__(self, subject: str) -> None:
         self.protocol_name = "my-task"
-        super().__init__(subject="steve")
+        super().__init__(subject=subject)
         self.corridor_idx = -1
         self.corridor = Corridor()
         # TODO:  pre-allocate this?
@@ -54,8 +53,17 @@ class Session(IblBase):
         """Called before every trial, including the first and before get_state_machine_trial"""
         self.rotary_encoder_position = []
         self.texture_idx = np.random.randint(0, len(self.CORRIDOR_TEXTURES))
-        self.texture_rewarded = self.texture_idx != 0
         self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]
+
+        texture_to_reward = SUBJECT_PARAMETERS.rewarded_texture
+        try:
+            rewarded_idx = self.CORRIDOR_TEXTURES.index(texture_to_reward)
+        except ValueError:
+            raise ValueError(
+                "rewarded_texture in subject_parameters.yaml is not present in CORRIDOR_TEXTURES"
+            )
+
+        self.texture_rewarded = self.texture_idx == rewarded_idx
         self.device_rotary_encoder.reset_position()
         self.device_rotary_encoder.set_thresholds()
         self.trial_num += 1
@@ -146,5 +154,5 @@ class Session(IblBase):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    session = Session()
+    session = Session(SUBJECT_PARAMETERS.subject_id)
     session.start_bpod()

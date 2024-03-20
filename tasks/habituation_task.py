@@ -28,17 +28,13 @@ from iblrig.panda3d.corridor.corridor import Corridor
 log = setup_logger("iblrig")
 
 
-# read defaults from task_parameters.yaml
-with open(Path(__file__).parent.joinpath("task_parameters.yaml")) as f:
-    DEFAULTS = yaml.safe_load(f)
+HERE = Path(__file__).parent.resolve()
+
+with open(Path(__file__).parent.joinpath("subject_parameters.yaml")) as f:
+    SUBJECT_PARAMETERS = yaml.safe_load(f)
 
 
 class Session(IblBase):
-    CORRIDOR_TEXTURES = [
-        "verticalGrating.jpg",
-        "pinkBars.png",
-        "blueTriangles.jpg",
-    ]
 
     def __init__(self, subject: str) -> None:
         self.protocol_name = "habitutation"
@@ -114,7 +110,5 @@ class Session(IblBase):
 
 
 if __name__ == "__main__":  # pragma: no cover
-
-    subject = input("Enter mouse id:\n\n")
-    session = Session(subject)
+    session = Session(SUBJECT_PARAMETERS.subject_id)
     session.start_bpod()

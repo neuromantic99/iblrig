@@ -1,7 +1,13 @@
-'ADAPTIVE_GAIN': True
-'AG_INIT_VALUE': 8.0  # Adaptive Gain init value (azimuth_degree/mm)
-'AG_MIN_VALUE': 4.0  # (azimuth_degree/mm)
-'CONTRAST_SET': [1.0, 0.5, 0.25, 0.125, 0.0625, 0.0]
-'CONTRAST_SET_PROBABILITY_TYPE': skew_zero  # uniform, skew_zero
-'DEBIAS': True  # Whether to use debiasing rule or not by repeating error trials
-'TRAINING_PHASE': 0
+"NTRIALS": 60 # keep this if running task or habituation 3
+# "NTRIALS": 20 # uncomment this if running calibrate solenoid or habituation 1
+# "NTRIALS": 40 # uncomment this if running habituation 2
+
+# run this section for the task
+"SOLENOID_OPEN_TIME": 0.02
+"REWARD_ZONE_TIME": 1.5
+"MAX_TRIAL_TIME": 600
+"ITI_LENGTH": 3
+# The ITI trigger doesn't work if you go to 60 hz.
+# If you want to go this fast, an alternative method is to
+# freeze the screen while the mouse receives the reward.
+"SCREEN_REFRESH_RATE": 30 # Hz

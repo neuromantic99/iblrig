@@ -57,7 +57,7 @@ class IblBase(
     iblrig.base_tasks.ValveMixin,
 ):
     base_parameters_file = Path(__file__).parent.parent.joinpath(
-        "iblrig/task_parameters.yaml"
+        "tasks/task_parameters.yaml"
     )
 
     def __init__(self, subject: str, delay_secs: int = 0):
