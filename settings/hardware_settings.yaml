@@ -49,6 +49,6 @@ corridor:
   # collision logic. Can be handled with panda collision logic but this is quite complex
   STOPPING_DISTANCE_FROM_END: 5
   LANDMARK_POSITIONS: [45, 90, 135]
-  LANDMARK_WIDTH: 10
+  LANDMARK_WIDTH: 5
 
 VERSION: 1.0.0

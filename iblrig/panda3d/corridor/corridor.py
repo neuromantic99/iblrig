@@ -113,7 +113,7 @@ class Corridor(ShowBase):
                     / CORRIDOR_LENGTH_CM
                     * CORRIDOR_LENGTH
                 ),
-                texture_name="grey.png",
+                texture_name="horGrat.jpg",
             )
 
         # Debugging purposes: mark the reward zone
@@ -316,9 +316,8 @@ if __name__ == "__main__":
     corridor = Corridor()
     corridor.set_camera_position(10)
 
-    # wall_texture = "blackTriangles.png"
-    # wall_texture = "blackAndWhiteCircles.png"
-    wall_texture = "blackBars.png"
+    wall_texture = "blackAndWhiteCircles.png"
+    # wall_texture = "blackBars.png"
 
     corridor.build_corridor(
         CORRIDOR_WIDTH,
@@ -339,7 +338,7 @@ if __name__ == "__main__":
                 / CORRIDOR_LENGTH_CM
                 * CORRIDOR_LENGTH
             ),
-            texture_name="endOfCorridor.png",
+            texture_name="horGrat.jpg",
         )
 
     corridor.run()
