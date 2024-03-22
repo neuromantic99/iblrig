@@ -6,6 +6,7 @@ This module tries to be exclude task related logic
 
 import abc
 import argparse
+import os
 from typing import List
 import datetime
 import inspect
@@ -242,6 +243,14 @@ class BaseSession(ABC):
             paths.SESSION_FOLDER = date_folder.joinpath(
                 f"{self.session_info.SESSION_NUMBER:03d}"
             )
+            paths.REMOTE_SESSION_PATH = (
+                paths.REMOTE_SUBJECT_FOLDER
+                / paths.SESSION_FOLDER.parent.parent.name
+                / paths.SESSION_FOLDER.parent.name
+                / paths.SESSION_FOLDER.name
+            )
+
+            os.makedirs(paths.REMOTE_SESSION_PATH, exist_ok=True)
             paths.TASK_COLLECTION = iblrig.path_helper.iterate_collection(
                 paths.SESSION_FOLDER
             )

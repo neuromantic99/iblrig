@@ -80,7 +80,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="close",
-            state_timer=0.5
+            state_timer=3
             - self.task_params.SOLENOID_OPEN_TIME,  # 0.5 seconds so faster calibration
             state_change_conditions={"Tup": "exit"},
             output_actions=[

@@ -175,6 +175,12 @@ class IblBase(
         with open(self.paths.SESSION_FOLDER / f"trial{i}.json", "w") as f:
             json.dump(asdict(trial_info), f)
 
+        try:
+            with open(self.paths.REMOTE_SESSION_PATH / f"trial{i}.json", "w") as f:
+                json.dump(asdict(trial_info), f)
+        except FileNotFoundError:
+            pass
+
     @abc.abstractmethod
     def next_trial(self):
         pass

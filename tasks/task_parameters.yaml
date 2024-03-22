@@ -3,7 +3,7 @@
 # "NTRIALS": 40 # uncomment this if running habituation 2
 
 # run this section for the task
-"SOLENOID_OPEN_TIME": 0.1
+"SOLENOID_OPEN_TIME": 0.02
 "REWARD_ZONE_TIME": 1.5
 "MAX_TRIAL_TIME": 240
 "ITI_LENGTH": 3
