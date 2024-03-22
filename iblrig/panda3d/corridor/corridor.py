@@ -1,4 +1,3 @@
-import builtins
 from typing import Any, List
 
 from direct.showbase.ShowBase import ShowBase
@@ -22,8 +21,9 @@ CORRIDOR_LENGTH_CM = HARDWARE_SETTINGS.corridor["CORRIDOR_LENGTH"]
 # Arbitary large length backwards to stop mouse falling out the back of the corridor
 ADDITIONAL_BACKWARDS_LENGTH = 1000
 
-# End of the corridor is the same size as the field of view
-CORRIDOR_WIDTH = CORRIDOR_HEIGHT = 10
+# Matches the aspect ratio of the screen
+CORRIDOR_WIDTH = 21
+CORRIDOR_HEIGHT = 17
 
 # A screen is 1 unit. So the corridor in units should be it's length in cm / the screen width
 NUMBER_OF_SCREENS_IN_CORRIDOR = (
@@ -44,7 +44,7 @@ SCREEN_WIDTH_PX = int(HARDWARE_SETTINGS.screen["SCREEN_WIDTH_PX"] / 2)
 SCREEN_HEIGHT_PX = int(HARDWARE_SETTINGS.screen["SCREEN_HEIGHT_PX"] / 2)
 
 # Think about this
-CAMERA_HEIGHT = 1
+CAMERA_HEIGHT = 7.5
 
 
 # TODO: camera starts half out the back wall
@@ -117,13 +117,13 @@ class Corridor(ShowBase):
             )
 
         # Debugging purposes: mark the reward zone
-        self.add_landmark(
-            y_pos=CAMERA_START_Y + (180 / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
-            width=CORRIDOR_WIDTH,
-            height=CORRIDOR_HEIGHT,
-            length=1,
-            texture_name="black.png",
-        )
+        # self.add_landmark(
+        #     y_pos=CAMERA_START_Y + (180 / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
+        #     width=CORRIDOR_WIDTH,
+        #     height=CORRIDOR_HEIGHT,
+        #     length=1,
+        #     texture_name="black.png",
+        # )
 
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
         self.camera.lookAt(
@@ -217,7 +217,11 @@ class Corridor(ShowBase):
         floor.setPos(0, y_pos, offset_from_wall)
         floor.setP(-90)
 
-        for model in [left_wall, right_wall, floor]:
+        ceiling = self.render.attachNewNode(cm.generate())
+        ceiling.setPos(0, y_pos, height - offset_from_wall)
+        ceiling.setP(-90)
+
+        for model in [left_wall, right_wall, floor, ceiling]:
             texture = self.loader.load_texture(
                 f"iblrig/panda3d/corridor/textures/{texture_name}"
             )
