@@ -263,6 +263,7 @@ TIME FROM START:      {self.time_elapsed}
 
 
 def plot_licks(all_licks: List) -> None:
+    return
 
     plt.axis((0, 30, 0, len(all_licks) + 2))
 
