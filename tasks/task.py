@@ -4,6 +4,7 @@ This modules extends the base_tasks modules by providing task logic around the C
 
 from matplotlib import pyplot as plt
 from path_helper import path_helper
+import random
 
 path_helper()
 
@@ -53,15 +54,20 @@ class Session(IblBase):
         """Called before every trial, including the first and before get_state_machine_trial"""
         self.rotary_encoder_position = []
         self.texture_idx = np.random.randint(0, len(self.CORRIDOR_TEXTURES))
-        self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]
 
-        texture_to_reward = SUBJECT_PARAMETERS.rewarded_texture
         try:
+            texture_to_reward = SUBJECT_PARAMETERS["rewarded_texture"]
             rewarded_idx = self.CORRIDOR_TEXTURES.index(texture_to_reward)
         except ValueError:
             raise ValueError(
                 "rewarded_texture in subject_parameters.yaml is not present in CORRIDOR_TEXTURES"
             )
+
+        self.texture_idx = (
+            rewarded_idx if random.random() > 0.33 else int(not rewarded_idx)
+        )
+
+        self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]
 
         self.texture_rewarded = self.texture_idx == rewarded_idx
         self.device_rotary_encoder.reset_position()
@@ -154,5 +160,5 @@ class Session(IblBase):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    session = Session(SUBJECT_PARAMETERS.subject_id)
+    session = Session(SUBJECT_PARAMETERS["subject_id"])
     session.start_bpod()
