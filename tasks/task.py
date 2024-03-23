@@ -117,6 +117,9 @@ class Session(IblBase):
             state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 "RotaryEncoder1_1": "reward_on",
+                "RotaryEncoder1_2": "reward_on",
+                "RotaryEncoder1_3": "reward_on",
+                "RotaryEncoder1_4": "reward_on",
                 "GlobalTimer1_End": "exit",
                 "GlobalTimer2_End": "trigger_ITI",
                 "Tup": "trigger_panda",

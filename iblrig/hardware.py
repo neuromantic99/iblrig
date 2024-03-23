@@ -182,6 +182,15 @@ class Bpod(BpodIO):
                         ],
                     ),
                 ),
+                # "disable_event_transmission": (
+                #     re_port,
+                #     self._define_message(
+                #         self.rotary_encoder,
+                #         [
+                #             RotaryEncoder.COM_SETZEROPOS,
+                #         ],
+                #     ),
+                # ),
             }
         )
 
@@ -251,7 +260,12 @@ class MyRotaryEncoder:
             / HARDWARE_SETTINGS.corridor["WHEEL_DIAMETER"]
             * 360
         )
-        self.SET_THRESHOLDS = [position_at_reward]
+        self.SET_THRESHOLDS = [
+            position_at_reward,
+            position_at_reward + 1,
+            position_at_reward + 2,
+            position_at_reward + 3,
+        ]
         self.ENABLE_THRESHOLDS = [True] * len(self.SET_THRESHOLDS)
         # ENABLE_THRESHOLDS needs 8 bools even if only 2 thresholds are set
         while len(self.ENABLE_THRESHOLDS) < 8:
@@ -291,9 +305,7 @@ class MyRotaryEncoder:
         self.rotary_encoder.set_zero_position()
 
     def get_angle(self) -> float | None:
-        if not self.connected:
-            return None
-        return self.rotary_encoder.current_position()
+        return self.rotary_encoder.current_position() if self.connected else None
 
 
 def sound_device_factory(output="sysdefault", samplerate=None):
