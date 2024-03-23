@@ -69,7 +69,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="open",
-            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            state_timer=self.task_params.SOLENOID_OPEN_TIME * 10,
             output_actions=[
                 ("Valve1", 255),  # 255 is the voltage that you send to the solenoid
             ],
@@ -80,8 +80,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="close",
-            state_timer=3
-            - self.task_params.SOLENOID_OPEN_TIME,  # 0.5 seconds so faster calibration
+            state_timer=0,
             state_change_conditions={"Tup": "exit"},
             output_actions=[
                 ("Valve1", 0),  # set solenoid voltage to 0

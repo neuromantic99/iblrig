@@ -64,7 +64,7 @@ class Session(IblBase):
             )
 
         self.texture_idx = (
-            rewarded_idx if random.random() > 0.33 else int(not rewarded_idx)
+            rewarded_idx if random.random() >= 0.5 else int(not rewarded_idx)
         )
 
         self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]

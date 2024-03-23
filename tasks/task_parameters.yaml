@@ -1,5 +1,5 @@
-# "NTRIALS": 60 # keep this if running task or habituation 3
-"NTRIALS": 20 # uncomment this if running calibrate solenoid or habituation 1
+"NTRIALS": 120 # keep this if running task or habituation 3
+# "NTRIALS": 20 # uncomment this if running calibrate solenoid or habituation 1
 # "NTRIALS": 40 # uncomment this if running habituation 2
 
 # run this section for the task
