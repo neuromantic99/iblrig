@@ -115,7 +115,13 @@ class Session(IblBase):
             state_name="trigger_panda",
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
-            state_change_conditions={"Tup": "transition"},
+            state_change_conditions={
+                "RotaryEncoder1_1": "reward_on",
+                "RotaryEncoder1_2": "reward_on",
+                "RotaryEncoder1_3": "reward_on",
+                "RotaryEncoder1_4": "reward_on",
+                "Tup": "transition",
+            },
         )
 
         sma.add_state(
