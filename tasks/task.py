@@ -50,23 +50,29 @@ class Session(IblBase):
         self.inject_corridor(self.corridor)
         self.injection_rotary_encoder_position(self.rotary_encoder_position)
 
+        self.previous_rewarded_textures: List[bool] = []
+
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
         self.rotary_encoder_position = []
-        self.texture_idx = np.random.randint(0, len(self.CORRIDOR_TEXTURES))
 
         try:
             texture_to_reward = SUBJECT_PARAMETERS["rewarded_texture"]
             rewarded_idx = self.CORRIDOR_TEXTURES.index(texture_to_reward)
-        except ValueError:
+        except ValueError as e:
             raise ValueError(
                 "rewarded_texture in subject_parameters.yaml is not present in CORRIDOR_TEXTURES"
-            )
+            ) from e
 
         self.texture_idx = (
             rewarded_idx if random.random() >= 0.5 else int(not rewarded_idx)
         )
 
+        # Do not do more than three of the same trial type
+        if self.previous_rewarded_textures[-3:] == [self.texture_idx] * 3:
+            self.texture_idx = int(not self.texture_idx)
+
+        self.previous_rewarded_textures.append(self.texture_idx)
         self.texture = self.CORRIDOR_TEXTURES[self.texture_idx]
 
         self.texture_rewarded = self.texture_idx == rewarded_idx
