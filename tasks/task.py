@@ -120,9 +120,24 @@ class Session(IblBase):
                 "RotaryEncoder1_2": "reward_on",
                 "RotaryEncoder1_3": "reward_on",
                 "RotaryEncoder1_4": "reward_on",
+                "Tup": "trigger_panda",
+            },
+        )
+
+        sma.add_state(
+            state_name="trigger_panda_post_reward",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
+            state_change_conditions={"Tup": "transition_post_reward"},
+        )
+
+        sma.add_state(
+            state_name="transition_post_reward",
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
+            state_change_conditions={
                 "GlobalTimer1_End": "exit",
                 "GlobalTimer2_End": "trigger_ITI",
-                "Tup": "trigger_panda",
+                "Tup": "trigger_panda_post_reward",
             },
         )
 
@@ -143,7 +158,7 @@ class Session(IblBase):
             # Needs a short time to turn the solenoid off.
             state_timer=0.001,
             output_actions=[("Valve1", 0)],
-            state_change_conditions={"Tup": "transition"},
+            state_change_conditions={"Tup": "transition_post_reward"},
         )
 
         sma.add_state(

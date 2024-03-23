@@ -182,15 +182,6 @@ class Bpod(BpodIO):
                         ],
                     ),
                 ),
-                # "disable_event_transmission": (
-                #     re_port,
-                #     self._define_message(
-                #         self.rotary_encoder,
-                #         [
-                #             RotaryEncoder.COM_SETZEROPOS,
-                #         ],
-                #     ),
-                # ),
             }
         )
 
