@@ -5,7 +5,7 @@
 # run this section for the task
 "SOLENOID_OPEN_TIME": 0.02
 "REWARD_ZONE_TIME": 1.5
-"MAX_TRIAL_TIME": 240
+"MAX_TRIAL_TIME": 120
 "ITI_LENGTH": 3
 # The ITI trigger doesn't work if you go to 60 hz.
 # If you want to go this fast, an alternative method is to
