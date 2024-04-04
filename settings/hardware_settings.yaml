@@ -5,7 +5,7 @@
 
 # The RIG_NAME should be a unique lab location name. If using Alyx, be sure to create this lab location
 # via the admin interface (admin/misc/lablocation/)
-RIG_NAME: rig1
+RIG_NAME: Box1
 # If your Bpod signals are recorded to a DAQ device running on a separate computer, set to False.
 # NB: When MAIN_SYNC is True, chained protocols are not supported.
 MAIN_SYNC: True
@@ -15,28 +15,8 @@ device_bpod:
   BPOD_TTL_TEST_STATUS: null # optional
   SOUND_BOARD_BPOD_PORT: null # optional
   ROTARY_ENCODER_BPOD_PORT: 1 # optional
-device_frame2ttl:
-  COM_F2TTL: COM6
-  F2TTL_CALIBRATION_DATE: 1970-12-31
-  F2TTL_DARK_THRESH: 91.0
-  F2TTL_HW_VERSION: null
-  F2TTL_LIGHT_THRESH: 51.0
 device_rotary_encoder:
   COM_ROTARY_ENCODER: COM5
-device_screen:
-  DISPLAY_IDX: 1
-  SCREEN_FREQ_TARGET: 60
-  SCREEN_FREQ_TEST_DATE: null # optional
-  SCREEN_FREQ_TEST_STATUS: null # optional
-  SCREEN_LUX_DATE: null # optional
-  SCREEN_LUX_VALUE: null # optional
-device_sound:
-  OUTPUT: sysdefault # harp or xonar or sysdefault
-device_valve:
-  WATER_CALIBRATION_DATE: 1970-12-31
-  WATER_CALIBRATION_OPEN_TIMES: [50, 100]
-  WATER_CALIBRATION_RANGE: [40, 140]
-  WATER_CALIBRATION_WEIGHT_PERDROP: [1.25, 2.75]
 screen:
   SCREEN_WIDTH: 20.5
   SCREEN_WIDTH_PX: 2048
@@ -50,5 +30,3 @@ corridor:
   STOPPING_DISTANCE_FROM_END: 5
   LANDMARK_POSITIONS: [45, 90, 135]
   LANDMARK_WIDTH: 5
-
-VERSION: 1.0.0
