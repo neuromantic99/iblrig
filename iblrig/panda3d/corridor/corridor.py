@@ -229,7 +229,7 @@ class Corridor(ShowBase):
             model.setTexture(texture, 1)
             model.setTwoSided(True)
             model.reparentTo(self.render)
-            num_texture_tiles = max(1, int(length / height))
+            num_texture_tiles = max(1, length // height)
             model.setTexScale(TextureStage.getDefault(), num_texture_tiles, 1)
 
             self.corridor_nodes.append(model)
@@ -320,7 +320,7 @@ if __name__ == "__main__":
     corridor = Corridor()
     corridor.set_camera_position(10)
 
-    wall_texture = "blackAndWhiteCircles.png"
+    wall_texture = "pebble.jpg"
     # wall_texture = "blackBars.png"
 
     corridor.build_corridor(

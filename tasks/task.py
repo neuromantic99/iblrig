@@ -35,7 +35,7 @@ with open(Path(__file__).parent.joinpath("subject_parameters.yaml")) as f:
 
 class Session(IblBase):
     CORRIDOR_TEXTURES = [
-        "blackBars.png",
+        "pebbles.jpg",
         "blackAndWhiteCircles.png",
     ]
 
