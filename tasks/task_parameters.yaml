@@ -1,13 +1,24 @@
-"NTRIALS": 120 # keep this if running task or habituation 3
-# "NTRIALS": 20 # uncomment this if running calibrate solenoid or habituation 1
-# "NTRIALS": 40 # uncomment this if running habituation 2
-
-# run this section for the task
+################## COMMON ACROSS ALL DAYS  #############################
 "SOLENOID_OPEN_TIME": 0.02
-"REWARD_ZONE_TIME": 1.5
-"MAX_TRIAL_TIME": 120
+
+################## Habituations #############################
+"TASK_NAME": "Habituation 1"
+"SESSION_LENGTH": 10  # Minutes
+
+"TASK_NAME": "Habituation 2"
+"SESSION_LENGTH": 20  # Minutes
+
+"TASK_NAME": "Habituation 3"
+"SESSION_LENGTH": 40  # Minutes
+
+"TASK_NAME": "Habituation 4"
+"SESSION_LENGTH": 60  # Minutes
+
+################## TASK #############################
+"TASK_NAME": "Main task"
+"NTRIALS": 120
+"MAX_TRIAL_TIME": 120 # Seconds
 "ITI_LENGTH": 3
-# The ITI trigger doesn't work if you go to 60 hz.
-# If you want to go this fast, an alternative method is to
-# freeze the screen while the mouse receives the reward.
+"REWARD_ZONE_TIME": 1.5
 "SCREEN_REFRESH_RATE": 30 # Hz
+"SESSION_LENGTH": 60  # Minutes

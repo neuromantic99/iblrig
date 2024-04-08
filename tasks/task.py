@@ -1,7 +1,4 @@
-"""
-This modules extends the base_tasks modules by providing task logic around the Choice World protocol
-"""
-
+import datetime
 from matplotlib import pyplot as plt
 from path_helper import path_helper
 import random
@@ -9,12 +6,11 @@ import random
 path_helper()
 
 from pathlib import Path
-from typing import Iterable, List
+from typing import List
 
 from tasks.habituation_task import IblBase
 
 
-import numpy as np
 from iblutil.util import setup_logger
 from pybpodapi.protocol import StateMachine
 
@@ -40,7 +36,7 @@ class Session(IblBase):
     ]
 
     def __init__(self, subject: str) -> None:
-        self.protocol_name = "my-task"
+        self.protocol_name = self.task_params["TASK_NAME"]
         super().__init__(subject=subject)
         self.corridor_idx = -1
         self.corridor = Corridor()
@@ -51,14 +47,23 @@ class Session(IblBase):
         self.injection_rotary_encoder_position(self.rotary_encoder_position)
 
         self.previous_rewarded_textures: List[bool] = []
+        self.start_time = datetime.datetime.now()
 
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
+
+        if (datetime.datetime.now() - self.start_time).total_seconds > self.task_params[
+            "SESSION_LENGTH"
+        ] / 60:
+            self.paths.SESSION_FOLDER.joinpath(".stop").touch()
+            self.logger.critical("Time limit reached, will exit at end of next trial")
+
         self.rotary_encoder_position = []
 
         try:
-            texture_to_reward = SUBJECT_PARAMETERS["rewarded_texture"]
-            rewarded_idx = self.CORRIDOR_TEXTURES.index(texture_to_reward)
+            rewarded_idx = self.CORRIDOR_TEXTURES.index(
+                SUBJECT_PARAMETERS["rewarded_texture"]
+            )
         except ValueError as e:
             raise ValueError(
                 "rewarded_texture in subject_parameters.yaml is not present in CORRIDOR_TEXTURES"

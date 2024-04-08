@@ -2,6 +2,7 @@
 This modules extends the base_tasks modules by providing task logic around the Choice World protocol
 """
 
+import datetime
 from pathlib import Path
 from typing import List
 
@@ -34,13 +35,21 @@ with open(Path(__file__).parent.joinpath("subject_parameters.yaml")) as f:
 class Session(IblBase):
 
     def __init__(self, subject: str) -> None:
-        self.protocol_name = "habitutation"
+        self.protocol_name = self.task_params["TASK_NAME"]
         super().__init__(subject=subject)
         self.rotary_encoder_position: List[float] = []
         self.injection_rotary_encoder_position(self.rotary_encoder_position)
+        self.start_time = datetime.datetime.now()
 
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
+
+        if (datetime.datetime.now() - self.start_time).total_seconds > self.task_params[
+            "SESSION_LENGTH"
+        ] / 60:
+            self.paths.SESSION_FOLDER.joinpath(".stop").touch()
+            self.logger.critical("Time limit reached, will exit at end of next trial")
+
         self.rotary_encoder_position = []
         self.trial_num += 1
 
