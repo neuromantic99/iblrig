@@ -158,7 +158,6 @@ class Corridor(ShowBase):
         """Set camera position based on the number of
         full wheel rotations required to complete the corridor
         """
-        print(f"possy: {position}")
         fraction_through_turn = position / 360
         distance = (fraction_through_turn * CORRIDOR_LENGTH) / NUM_TURNS_PER_LAP
 
@@ -168,7 +167,6 @@ class Corridor(ShowBase):
             - HARDWARE_SETTINGS.corridor["STOPPING_DISTANCE_FROM_END"],
         )
 
-        print(f"camera pos {set_camera_position}")
         self.camera.setPos(0, set_camera_position, CAMERA_HEIGHT)
 
     def step(self) -> None:

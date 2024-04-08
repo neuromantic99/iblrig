@@ -55,7 +55,7 @@ class IblBase(
     iblrig.base_tasks.BpodMixin,
     iblrig.base_tasks.Frame2TTLMixin,
     iblrig.base_tasks.RotaryEncoderMixin,
-    iblrig.base_tasks.ValveMixin,
+    # iblrig.base_tasks.ValveMixin,
 ):
     base_parameters_file = Path(__file__).parent.parent.joinpath(
         "tasks/task_parameters.yaml"
@@ -100,7 +100,7 @@ class IblBase(
         if not self.is_mock:
             self.start_mixin_frame2ttl()
             self.start_mixin_bpod()
-            self.start_mixin_valve()
+            # self.start_mixin_valve()
             self.start_mixin_rotary_encoder()
 
     def _run(self):
