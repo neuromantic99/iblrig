@@ -35,7 +35,8 @@ with open(Path(__file__).parent.joinpath("subject_parameters.yaml")) as f:
 class Session(IblBase):
 
     def __init__(self, subject: str) -> None:
-        self.protocol_name = self.task_params["TASK_NAME"]
+        self.protocol_name = "habituation"
+
         super().__init__(subject=subject)
         self.rotary_encoder_position: List[float] = []
         self.injection_rotary_encoder_position(self.rotary_encoder_position)
@@ -43,10 +44,9 @@ class Session(IblBase):
 
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
-
-        if (datetime.datetime.now() - self.start_time).total_seconds > self.task_params[
-            "SESSION_LENGTH"
-        ] / 60:
+        if (
+            datetime.datetime.now() - self.start_time
+        ).total_seconds() > self.task_params["SESSION_LENGTH"] * 60:
             self.paths.SESSION_FOLDER.joinpath(".stop").touch()
             self.logger.critical("Time limit reached, will exit at end of next trial")
 
@@ -116,7 +116,7 @@ class Session(IblBase):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    session = Session(SUBJECT_PARAMETERS.subject_id)
+    session = Session(SUBJECT_PARAMETERS["subject_id"])
     session.start_bpod()
     # Required to close the connection to the RE and not have to
     # replug USB on next run
