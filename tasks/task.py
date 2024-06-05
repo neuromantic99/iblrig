@@ -36,8 +36,10 @@ class Session(IblBase):
     ]
 
     def __init__(self, subject: str) -> None:
-        self.protocol_name = self.task_params["TASK_NAME"]
+        self.protocol_name = "Main task"
+
         super().__init__(subject=subject)
+
         self.corridor_idx = -1
         self.corridor = Corridor()
         # TODO:  pre-allocate this?
@@ -52,9 +54,9 @@ class Session(IblBase):
     def next_trial(self):
         """Called before every trial, including the first and before get_state_machine_trial"""
 
-        if (datetime.datetime.now() - self.start_time).total_seconds > self.task_params[
-            "SESSION_LENGTH"
-        ] / 60:
+        if (
+            datetime.datetime.now() - self.start_time
+        ).total_seconds() > self.task_params["SESSION_LENGTH"] * 60:
             self.paths.SESSION_FOLDER.joinpath(".stop").touch()
             self.logger.critical("Time limit reached, will exit at end of next trial")
 
@@ -126,7 +128,7 @@ class Session(IblBase):
                 "RotaryEncoder1_2": "reward_on",
                 "RotaryEncoder1_3": "reward_on",
                 "RotaryEncoder1_4": "reward_on",
-                "GlobalTimer1_End": "exit",
+                "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "transition",
             },
         )
@@ -140,7 +142,7 @@ class Session(IblBase):
                 "RotaryEncoder1_2": "reward_on",
                 "RotaryEncoder1_3": "reward_on",
                 "RotaryEncoder1_4": "reward_on",
-                "GlobalTimer1_End": "exit",
+                "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "trigger_panda",
             },
         )
