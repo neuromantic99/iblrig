@@ -1,24 +1,23 @@
 ################## COMMON ACROSS ALL DAYS  #############################
 "SOLENOID_OPEN_TIME": 0.02
-
 ################## Habituations #############################
-"TASK_NAME": "Habituation 1"
-"SESSION_LENGTH": 10  # Minutes
-
-"TASK_NAME": "Habituation 2"
-"SESSION_LENGTH": 20  # Minutes
-
-"TASK_NAME": "Habituation 3"
-"SESSION_LENGTH": 40  # Minutes
-
-"TASK_NAME": "Habituation 4"
-"SESSION_LENGTH": 60  # Minutes
-
-################## TASK #############################
-"TASK_NAME": "Main task"
-"NTRIALS": 120
-"MAX_TRIAL_TIME": 120 # Seconds
-"ITI_LENGTH": 3
-"REWARD_ZONE_TIME": 1.5
-"SCREEN_REFRESH_RATE": 30 # Hz
-"SESSION_LENGTH": 60  # Minutes
+# "TASK_NAME": "Habituation 2"
+# "SESSION_LENGTH": 20 # Minutes
+# "NTRIALS": 1000
+# "TASK_NAME": "Habituation 3"
+# "SESSION_LENGTH": 40 # Minutes
+# "NTRIALS": 1000
+# "TASK_NAME": "Habituation 4"
+# "SESSION_LENGTH": 60 # Minutes
+# "NTRIALS": 1000
+"TASK_NAME": "Habituation 5"
+"SESSION_LENGTH": 60 # Minutes
+"NTRIALS": 1000
+# ################## TASK #############################
+# "TASK_NAME": "Main task"
+# "NTRIALS": 100
+# "MAX_TRIAL_TIME": 180 # Seconds
+# "ITI_LENGTH": 3
+# "REWARD_ZONE_TIME": 1.5
+# "SCREEN_REFRESH_RATE": 30 # Hz
+# "SESSION_LENGTH": 60 # Minutes
