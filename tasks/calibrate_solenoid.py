@@ -80,7 +80,7 @@ class Session(IblBase):
 
         sma.add_state(
             state_name="close",
-            state_timer=0,
+            state_timer=0.01,
             state_change_conditions={"Tup": "exit"},
             output_actions=[
                 ("Valve1", 0),  # set solenoid voltage to 0
