@@ -10,9 +10,9 @@
 # "TASK_NAME": "Habituation 4"
 # "SESSION_LENGTH": 60 # Minutes
 # "NTRIALS": 1000
-"TASK_NAME": "Habituation 5"
-"SESSION_LENGTH": 60 # Minutes
-"NTRIALS": 1000
+# "TASK_NAME": "Habituation 5"
+# "SESSION_LENGTH": 60 # Minutes
+# "NTRIALS": 1000
 # ################## TASK #############################
 # "TASK_NAME": "Main task"
 # "NTRIALS": 100
@@ -21,3 +21,12 @@
 # "REWARD_ZONE_TIME": 1.5
 # "SCREEN_REFRESH_RATE": 30 # Hz
 # "SESSION_LENGTH": 60 # Minutes
+################## SOLENOID OPTIMISATION ###################
+"SOLENOID_OPEN_TIME": 0.02
+"TASK_NAME": "Solenoid optimisation"
+"SESSION_LENGTH": 1 # Minutes
+"NTRIALS": 10
+"MAX_TRIAL_TIME": 180 # Seconds
+"REWARD_ZONE_TIME": 1.5
+"SCREEN_REFRESH_RATE": 30 # Hz
+"ITI_LENGTH": 3

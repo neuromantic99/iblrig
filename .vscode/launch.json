@@ -49,6 +49,18 @@
         "PYTHONPATH": "${workspaceFolder}"
       },
       "justMyCode": true
-    }
+    },
+    {
+      "name": "run test-task",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "tasks/test-task.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    },
   ]
 }
