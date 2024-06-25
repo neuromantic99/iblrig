@@ -11,7 +11,6 @@
 # rewarded_texture: "pebble.jpg"
 # subject_id: "test"
 # rewarded_texture: "pebble.jpg"
-
 # subject_id: "J012"
 # rewarded_texture: "pebble.jpg"
 # subject_id: "J013"
@@ -20,13 +19,11 @@
 # rewarded_texture: "blackAndWhiteCircles.png"
 # subject_id: "test"
 # rewarded_texture: "pebble.jpg"
-
 # subject_id: "test_rotatoryencoder"
-# rewarded_texture: "pebble.jpg"
-
-# subject_id: "J015"
-# rewarded_texture: "pebble.jpg"
+# rewarded_texture: "pebblv    e.jpg"
+subject_id: "J015"
+rewarded_texture: "pebble.jpg"
 # subject_id: "J016"
 # rewarded_texture: "pebble.jpg"
-subject_id: "J017"
-rewarded_texture: "blackAndWhiteCircles.png"
+# subject_id: "J017"
+# rewarded_texture: "blackAndWhiteCircles.png"
