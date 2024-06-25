@@ -21,6 +21,7 @@
 "REWARD_ZONE_TIME": 1.5
 "SCREEN_REFRESH_RATE": 30 # Hz
 "SESSION_LENGTH": 60 # Minutes
+"INTER_REWARD_INTERVAL": 0.75  # Seconds
 ################## SOLENOID OPTIMISATION ###################
 # "SOLENOID_OPEN_TIME": 0.02
 # "TASK_NAME": "Solenoid optimisation"

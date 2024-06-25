@@ -163,7 +163,7 @@ class Session(IblBase):
             state_name="reward_off1",
             # Needs a short time to turn the solenoid off.
             # JB: This timer is critical. Basically, it is the time in between two water drops.
-            state_timer=0.75,
+            state_timer=self.task_params.INTER_REWARD_INTERVAL,
             output_actions=[("Valve1", 0)],
             state_change_conditions={"Tup": "reward_on2"},
         )
