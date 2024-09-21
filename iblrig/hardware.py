@@ -248,7 +248,7 @@ class MyRotaryEncoder:
         # How many degrees to turn forward before triggering the reward
         position_at_reward = (
             HARDWARE_SETTINGS.corridor["DISTANCE_TO_REWARD_ZONE"]
-            / HARDWARE_SETTINGS.corridor["WHEEL_DIAMETER"]
+            / HARDWARE_SETTINGS.corridor["WHEEL_CIRCUMFERENCE"]
             * 360
         )
         self.SET_THRESHOLDS = [

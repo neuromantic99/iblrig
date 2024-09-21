@@ -24,7 +24,8 @@ screen:
   SCREEN_WIDTH_PX: 2048
   SCREEN_HEIGHT_PX: 1536
 corridor:
-  WHEEL_DIAMETER: 48
+  # 17 * PI
+  WHEEL_CIRCUMFERENCE: 53.4 
   DISTANCE_TO_REWARD_ZONE: 180
   CORRIDOR_LENGTH: 200
   # TODO: Currently the camera stops moving an arbitary distance from the end to simulate
