@@ -60,6 +60,7 @@ class Session(IblBase):
         sma = StateMachine(self.bpod)
         sma.set_global_timer(1, 5)
         sma.set_global_timer(2, 25)
+        reward_off_timer = 1
 
         sma.add_state(
             state_name="trial_start",
@@ -88,26 +89,60 @@ class Session(IblBase):
             state_name="transition",
             state_timer=1 / 10,
             state_change_conditions={
-                "GlobalTimer1_End": "reward_on",
+                "GlobalTimer1_End": "reward_on1",
                 "GlobalTimer2_End": "exit",
                 "Tup": "store_encoder_position",
             },
         )
 
         sma.add_state(
-            state_name="reward_on",
+            state_name="reward_on1",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
                 ("Valve1", 255),
                 ("GlobalTimerTrig", 2),
             ],  # To FPGA
-            state_change_conditions={"Tup": "reward_off"},
+            state_change_conditions={"Tup": "reward_off1"},
         )
 
         sma.add_state(
-            state_name="reward_off",
+            state_name="reward_off1",
             # Short timer to actually send voltage to solenoid
-            state_timer=0.001,
+            state_timer=reward_off_timer,
+            output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "reward_on2"},
+        )
+
+        sma.add_state(
+            state_name="reward_on2",
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", 255),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off2"},
+        )
+
+        sma.add_state(
+            state_name="reward_off2",
+            # Short timer to actually send voltage to solenoid
+            state_timer=reward_off_timer,
+            output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "reward_on3"},
+        )
+
+        sma.add_state(
+            state_name="reward_on3",
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", 255),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off3"},
+        )
+
+        sma.add_state(
+            state_name="reward_off3",
+            # Short timer to actually send voltage to solenoid
+            state_timer=reward_off_timer,
             output_actions=[("Valve1", 0)],
             state_change_conditions={"Tup": "transition"},
         )
