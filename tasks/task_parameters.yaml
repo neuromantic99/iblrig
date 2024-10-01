@@ -11,19 +11,19 @@
 # "TASK_NAME": "Habituation 4"
 # "SESSION_LENGTH": 60 # Minutes
 # "NTRIALS": 1000
-"TASK_NAME": "Habituation 5"
-"SESSION_LENGTH": 60 # Minutes
-"NTRIALS": 1000
+# "TASK_NAME": "Habituation 5"
+# "SESSION_LENGTH": 60 # Minutes
+# "NTRIALS": 1000
 
 # ################## TASK #############################
-# "TASK_NAME": "Main task"
-# "NTRIALS": 100
-# "MAX_TRIAL_TIME": 180 # Seconds
-# "ITI_LENGTH": 3
-# "REWARD_ZONE_TIME": 1.5
-# "SCREEN_REFRESH_RATE": 30 # Hz
-# "SESSION_LENGTH": 60 # Minutes
-# "INTER_REWARD_INTERVAL": 0.75  # Seconds
+"TASK_NAME": "Main task"
+"NTRIALS": 100
+"MAX_TRIAL_TIME": 180 # Seconds
+"ITI_LENGTH": 3
+"REWARD_ZONE_TIME": 1.5
+"SCREEN_REFRESH_RATE": 30 # Hz
+"SESSION_LENGTH": 60 # Minutes
+"INTER_REWARD_INTERVAL": 0.1  # Seconds
 
 ################## SOLENOID OPTIMISATION ###################
 # "SOLENOID_OPEN_TIME": 0.02
@@ -36,12 +36,12 @@
 # "ITI_LENGTH": 3
 
 ############### FEAR CONDITIONING ######################
-"TASK_NAME": "Fear conditioning"
-"NTRIALS": 100
-"MAX_TRIAL_TIME": 60  # Seconds
-"ITI_LENGTH": 10
-"SCREEN_REFRESH_RATE": 30 # Hz
-"SESSION_LENGTH": 30 # Minutes
-"INTER_REWARD_INTERVAL": 0.75  # Seconds
-"INTER_PUFF_INTERVAL": 10  # Seconds
-"PUFF_TIME": 0.1   # Seconds
+# "TASK_NAME": "Fear conditioning"
+# "NTRIALS": 100
+# "MAX_TRIAL_TIME": 60  # Seconds
+# "ITI_LENGTH": 10
+# "SCREEN_REFRESH_RATE": 30 # Hz
+# "SESSION_LENGTH": 30 # Minutes
+# "INTER_REWARD_INTERVAL": 0.75  # Seconds
+# "INTER_PUFF_INTERVAL": 10  # Seconds
+# "PUFF_TIME": 0.1   # Seconds

@@ -10,22 +10,21 @@ RIG_NAME: Box1
 # NB: When MAIN_SYNC is True, chained protocols are not supported.
 MAIN_SYNC: True
 device_bpod:
-  COM_BPOD: /dev/ACM2
-  # COM_BPOD: /dev/ACM1
+  COM_BPOD: /dev/ACM1
   BPOD_TTL_TEST_DATE: null # optional
   BPOD_TTL_TEST_STATUS: null # optional
   SOUND_BOARD_BPOD_PORT: null # optional
   ROTARY_ENCODER_BPOD_PORT: 1 # optional
 device_rotary_encoder:
-  COM_ROTARY_ENCODER: /dev/ACM1
-  # COM_ROTARY_ENCODER: /dev/ACM2
+  COM_ROTARY_ENCODER: /dev/ACM2
+  HARDWARE_VERSION: 2
 screen:
   SCREEN_WIDTH: 20.5
   SCREEN_WIDTH_PX: 2048
   SCREEN_HEIGHT_PX: 1536
 corridor:
-  # 17 * PI
-  WHEEL_CIRCUMFERENCE: 53.4 
+  # 11.95 * PI = 37.54
+  WHEEL_CIRCUMFERENCE: 37.5
   DISTANCE_TO_REWARD_ZONE: 180
   CORRIDOR_LENGTH: 200
   # TODO: Currently the camera stops moving an arbitary distance from the end to simulate

@@ -117,13 +117,13 @@ class Corridor(ShowBase):
             )
 
         # Debugging purposes: mark the reward zone
-        # self.add_landmark(
-        #     y_pos=CAMERA_START_Y + (180 / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
-        #     width=CORRIDOR_WIDTH,
-        #     height=CORRIDOR_HEIGHT,
-        #     length=1,
-        #     texture_name="black.png",
-        # )
+        self.add_landmark(
+            y_pos=CAMERA_START_Y + (180 / CORRIDOR_LENGTH_CM) * CORRIDOR_LENGTH,
+            width=CORRIDOR_WIDTH,
+            height=CORRIDOR_HEIGHT,
+            length=1,
+            texture_name="black.png",
+        )
 
         self.camera.setPos(0, CAMERA_START_Y, CAMERA_HEIGHT)
         self.camera.lookAt(
@@ -158,6 +158,7 @@ class Corridor(ShowBase):
         """Set camera position based on the number of
         full wheel rotations required to complete the corridor
         """
+        print(f"+AHHHHHHHHHHHHHHHHHHHHHHHHHHh{position}")
         fraction_through_turn = position / 360
         distance = (fraction_through_turn * CORRIDOR_LENGTH) / NUM_TURNS_PER_LAP
 

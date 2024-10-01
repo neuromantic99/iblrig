@@ -1,6 +1,10 @@
 from pybpodapi.com.arcom import ArCOM, ArduinoTypes
 
 
+
+hardware_version: int
+
+
 class RotaryEncoderModule(object):
 
     COM_HANDSHAKE = "C"
@@ -18,7 +22,7 @@ class RotaryEncoderModule(object):
     COM_SETTHRESHOLDS = ord("T")
     COM_SETWRAPPOINT = ord("W")
 
-    def __init__(self, serialport=None):
+    def __init__(self, hardware_version: int, serialport=None):
         """
         Constructor of the RotaryEncoderModule object
         A serial connection to the Rotary Encoder board is opened at the construction of the object.
@@ -27,6 +31,7 @@ class RotaryEncoderModule(object):
         """
         if serialport:
             self.open(serialport)
+        self.hardware_version = hardware_version
 
     def open(self, serialport):
         """
@@ -46,10 +51,13 @@ class RotaryEncoderModule(object):
         self.arcom.close()
 
     def __pos_2_degrees(self, pos):
-        return round(((float(pos) / 512.0) * 180.0) * 10.0) / 10.0
+        wrap_point = 2048.0 if self.hardware_version == 2 else 512.0
+        return round(((float(pos) / wrap_point) * 180.0) * 10.0) / 10.0
 
     def __degrees_2_pos(self, degrees):
-        return int(round((float(degrees) / 180.0) * 512.0, 0))
+        wrap_point = 2048.0 if self.hardware_version == 2 else 512.0
+
+        return int(round((float(degrees) / 180.0) * wrap_point, 0))
 
     def enable_evt_transmission(self):
         """

@@ -215,7 +215,7 @@ class Bpod(BpodIO):
             input("Press ENTER when done.")
         else:
             time.sleep(duration)
-        self.manual_override(self.ChannelTypes.OUTPUT, self.ChannelNames.VALVE, 1, 0)
+        self.manual_overrRotaryEncoderModuleide(self.ChannelTypes.OUTPUT, self.ChannelNames.VALVE, 1, 0)
 
     @static_vars(supported=True)
     def set_status_led(self, state: bool) -> bool:
@@ -280,7 +280,7 @@ class MyRotaryEncoder:
     def connect(self):
         if self.RE_PORT == "COM#":
             return
-        self.rotary_encoder = RotaryEncoderModule(self.RE_PORT)
+        self.rotary_encoder = RotaryEncoderModule(serialport=self.RE_PORT, hardware_version=HARDWARE_SETTINGS.device_rotary_encoder["HARDWARE_VERSION"])
         # Reading the current position doesn't work unless you do this
         self.rotary_encoder.disable_stream()
         self.rotary_encoder.set_zero_position()
