@@ -185,6 +185,26 @@ class Session(IblBase):
             # Needs a short time to turn the solenoid off.
             state_timer=0.001,
             output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "reward_on3"},
+        )
+
+        sma.add_state(
+            state_name="reward_on3",
+            # Screen will freeze for the solenoid open time, probably fine but keep an
+            # eye if you need to open it for a long time
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", solenoid_pin),
+                ("GlobalTimerTrig", 2),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off3"},
+        )
+
+        sma.add_state(
+            state_name="reward_off3",
+            # Needs a short time to turn the solenoid off.
+            state_timer=0.001,
+            output_actions=[("Valve1", 0)],
             state_change_conditions={"Tup": "transition_post_reward"},
         )
 
