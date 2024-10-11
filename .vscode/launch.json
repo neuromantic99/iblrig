@@ -26,6 +26,18 @@
       "justMyCode": true
     },
     {
+      "name": "run habituation fear",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "tasks/habituation_fear.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": true
+    },
+    {
       "name": "run solenoid",
       "type": "debugpy",
       "request": "launch",
@@ -43,7 +55,10 @@
       "request": "launch",
       "program": "${workspaceFolder}/iblrig/panda3d/corridor/corridor.py",
       "console": "integratedTerminal",
-      "args": ["-m", "main_task.task"],
+      "args": [
+        "-m",
+        "main_task.task"
+      ],
       "cwd": "${workspaceFolder}",
       "env": {
         "PYTHONPATH": "${workspaceFolder}"

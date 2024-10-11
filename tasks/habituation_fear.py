@@ -58,13 +58,12 @@ class Session(IblBase):
 
     def get_state_machine_trial(self, i):
         sma = StateMachine(self.bpod)
-        # Time the trial
-        sma.set_global_timer(1, 30)
+
+        sma.set_global_timer(1, 300)
         # 5 licks to trigger a reward
         sma.set_global_counter(counter_number=1, target_event="Port1In", threshold=5)
-        reward_off_timer = 1
 
-        # TODO: Do we need an ITI here?
+        reward_off_timer = 0.5
 
         sma.add_state(
             state_name="trial_start",
@@ -72,7 +71,6 @@ class Session(IblBase):
             state_change_conditions={"Tup": "reset_rotary_encoder"},
             output_actions=[
                 ("GlobalTimerTrig", 1),
-                (Bpod.OutputChannels.GlobalCounterReset, 1),
             ],
         )
 
@@ -80,7 +78,7 @@ class Session(IblBase):
             state_name="reset_rotary_encoder",
             state_timer=0,
             output_actions=[self.bpod.actions.rotary_encoder_reset],
-            state_change_conditions={"Tup": "store_encoder_position"},
+            state_change_conditions={"Tup": "transition"},
         )
 
         sma.add_state(
@@ -90,7 +88,7 @@ class Session(IblBase):
             state_change_conditions={
                 "Tup": "transition",
                 "GlobalCounter1_End": "reward_on1",
-                "GlobalTimer2_End": "exit",
+                "GlobalTimer1_End": "exit",
             },
         )
 
@@ -99,8 +97,8 @@ class Session(IblBase):
             state_timer=1 / 10,
             state_change_conditions={
                 "GlobalCounter1_End": "reward_on1",
-                "GlobalTimer2_End": "exit",
                 "Tup": "store_encoder_position",
+                "GlobalTimer1_End": "exit",
             },
         )
 
@@ -109,11 +107,9 @@ class Session(IblBase):
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
                 ("Valve1", 255),
-                ("GlobalTimerTrig", 2),
-            ],  # To FPGA
+            ],
             state_change_conditions={
                 "Tup": "reward_off1",
-                "GlobalTimer2_End": "exit",
             },
         )
 
@@ -124,7 +120,6 @@ class Session(IblBase):
             output_actions=[("Valve1", 0)],
             state_change_conditions={
                 "Tup": "reward_on2",
-                "GlobalTimer2_End": "exit",
             },
         )
 
@@ -136,7 +131,6 @@ class Session(IblBase):
             ],  # To FPGA
             state_change_conditions={
                 "Tup": "reward_off2",
-                "GlobalTimer2_End": "exit",
             },
         )
 
@@ -146,31 +140,16 @@ class Session(IblBase):
             state_timer=reward_off_timer,
             output_actions=[("Valve1", 0)],
             state_change_conditions={
-                "Tup": "reward_on3",
-                "GlobalTimer2_End": "exit",
+                "Tup": "iti",
             },
         )
 
+        # TODO: wont save the encoder position here
         sma.add_state(
-            state_name="reward_on3",
-            state_timer=self.task_params.SOLENOID_OPEN_TIME,
-            output_actions=[
-                ("Valve1", 255),
-            ],  # To FPGA
+            state_name="iti",
+            state_timer=10,
             state_change_conditions={
-                "Tup": "reward_off3",
-                "GlobalTimer2_End": "exit",
-            },
-        )
-
-        sma.add_state(
-            state_name="reward_off3",
-            # Short timer to actually send voltage to solenoid
-            state_timer=reward_off_timer,
-            output_actions=[("Valve1", 0)],
-            state_change_conditions={
-                "Tup": "transition",
-                "GlobalTimer2_End": "exit",
+                "Tup": "exit",
             },
         )
 
