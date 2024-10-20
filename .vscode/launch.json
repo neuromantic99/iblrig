@@ -66,10 +66,10 @@
       "justMyCode": true
     },
     {
-      "name": "run test-task",
+      "name": "run task (unsupervised)",
       "type": "debugpy",
       "request": "launch",
-      "program": "tasks/test-task.py",
+      "program": "tasks/task_unsupervised.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
