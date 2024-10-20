@@ -124,10 +124,10 @@ class Session(IblBase):
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
             state_change_conditions={
                 # 2,3.4 are backups in case the first one doesn't trigger
-                # "RotaryEncoder1_1": "reward_on1",
-                # "RotaryEncoder1_2": "reward_on1",
-                # "RotaryEncoder1_3": "reward_on1",
-                # "RotaryEncoder1_4": "reward_on1",
+                "RotaryEncoder1_1": "no_reward",
+                "RotaryEncoder1_2": "no_reward",
+                "RotaryEncoder1_3": "no_reward",
+                "RotaryEncoder1_4": "no_reward",
                 "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "transition",
             },
@@ -138,10 +138,10 @@ class Session(IblBase):
             state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 # 2,3.4 are backups in case the first one doesn't trigger
-                # "RotaryEncoder1_1": "reward_on1",
-                # "RotaryEncoder1_2": "reward_on1",
-                # "RotaryEncoder1_3": "reward_on1",
-                # "RotaryEncoder1_4": "reward_on1",
+                "RotaryEncoder1_1": "no_reward",
+                "RotaryEncoder1_2": "no_reward",
+                "RotaryEncoder1_3": "no_reward",
+                "RotaryEncoder1_4": "no_reward",
                 "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "trigger_panda",
             },
@@ -200,32 +200,32 @@ class Session(IblBase):
         #     state_change_conditions={"Tup": "reward_off3"},
         # )
 
-        # sma.add_state(
-        #     state_name="reward_off3",
-        #     # Needs a short time to turn the solenoid off.
-        #     state_timer=0.001,
-        #     output_actions=[("Valve1", 0)],
-        #     state_change_conditions={"Tup": "transition_post_reward"},
-        # )
+        sma.add_state(
+            state_name="no_reward",
+            # Needs a short time to turn the solenoid off.
+            state_timer=0.001,
+            # output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "transition_post_reward"},
+        )
 
-        # sma.add_state(
-        #     state_name="transition_post_reward",
-        #     state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
-        #     state_change_conditions={
-        #         "GlobalTimer2_End": "trigger_ITI",
-        #         "Tup": "trigger_panda_post_reward",
-        #     },
-        # )
+        sma.add_state(
+            state_name="transition_post_reward",
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
+            state_change_conditions={
+                "GlobalTimer2_End": "trigger_ITI",
+                "Tup": "trigger_panda_post_reward",
+            },
+        )
 
-        # sma.add_state(
-        #     state_name="trigger_panda_post_reward",
-        #     state_timer=0,
-        #     output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
-        #     state_change_conditions={
-        #         "GlobalTimer2_End": "trigger_ITI",
-        #         "Tup": "transition_post_reward",
-        #     },
-        # )
+        sma.add_state(
+            state_name="trigger_panda_post_reward",
+            state_timer=0,
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
+            state_change_conditions={
+                "GlobalTimer2_End": "trigger_ITI",
+                "Tup": "transition_post_reward",
+            },
+        )
 
         sma.add_state(
             state_name="trigger_ITI",
