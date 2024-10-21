@@ -36,7 +36,7 @@ class Session(IblBase):
     ]
 
     def __init__(self, subject: str) -> None:
-        self.protocol_name = "Main task (unsupervised)"
+        self.protocol_name = "Main task"
 
         super().__init__(subject=subject)
 
@@ -97,7 +97,7 @@ class Session(IblBase):
         self.run()
 
     def get_state_machine_trial(self, i):
-        solenoid_pin = 255 if self.texture_rewarded else 0
+        solenoid_pin = 0
         sma = StateMachine(self.bpod)
         sma.set_global_timer(1, self.task_params.MAX_TRIAL_TIME)
         sma.set_global_timer(2, self.task_params.REWARD_ZONE_TIME)
@@ -124,10 +124,10 @@ class Session(IblBase):
             output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
             state_change_conditions={
                 # 2,3.4 are backups in case the first one doesn't trigger
-                "RotaryEncoder1_1": "no_reward",
-                "RotaryEncoder1_2": "no_reward",
-                "RotaryEncoder1_3": "no_reward",
-                "RotaryEncoder1_4": "no_reward",
+                "RotaryEncoder1_1": "reward_on1",
+                "RotaryEncoder1_2": "reward_on1",
+                "RotaryEncoder1_3": "reward_on1",
+                "RotaryEncoder1_4": "reward_on1",
                 "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "transition",
             },
@@ -138,73 +138,73 @@ class Session(IblBase):
             state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
             state_change_conditions={
                 # 2,3.4 are backups in case the first one doesn't trigger
-                "RotaryEncoder1_1": "no_reward",
-                "RotaryEncoder1_2": "no_reward",
-                "RotaryEncoder1_3": "no_reward",
-                "RotaryEncoder1_4": "no_reward",
+                "RotaryEncoder1_1": "reward_on1",
+                "RotaryEncoder1_2": "reward_on1",
+                "RotaryEncoder1_3": "reward_on1",
+                "RotaryEncoder1_4": "reward_on1",
                 "GlobalTimer1_End": "trigger_ITI",
                 "Tup": "trigger_panda",
             },
         )
 
-        # sma.add_state(
-        #     state_name="reward_on1",
-        #     # Screen will freeze for the solenoid open time, probably fine but keep an
-        #     # eye if you need to open it for a long time
-        #     state_timer=self.task_params.SOLENOID_OPEN_TIME,
-        #     output_actions=[
-        #         ("Valve1", solenoid_pin),
-        #         ("GlobalTimerTrig", 2),
-        #     ],  # To FPGA
-        #     state_change_conditions={"Tup": "reward_off1"},
-        # )
-
-        # sma.add_state(
-        #     state_name="reward_off1",
-        #     # Needs a short time to turn the solenoid off.
-        #     # JB: This timer is critical. Basically, it is the time in between two water drops.
-        #     state_timer=self.task_params.INTER_REWARD_INTERVAL,
-        #     output_actions=[("Valve1", 0)],
-        #     state_change_conditions={"Tup": "reward_on2"},
-        # )
-
-        # sma.add_state(
-        #     state_name="reward_on2",
-        #     # Screen will freeze for the solenoid open time, probably fine but keep an
-        #     # eye if you need to open it for a long time
-        #     state_timer=self.task_params.SOLENOID_OPEN_TIME,
-        #     output_actions=[
-        #         ("Valve1", solenoid_pin),
-        #         ("GlobalTimerTrig", 2),
-        #     ],  # To FPGA
-        #     state_change_conditions={"Tup": "reward_off2"},
-        # )
-
-        # sma.add_state(
-        #     state_name="reward_off2",
-        #     # Needs a short time to turn the solenoid off.
-        #     state_timer=0.001,
-        #     output_actions=[("Valve1", 0)],
-        #     state_change_conditions={"Tup": "reward_on3"},
-        # )
-
-        # sma.add_state(
-        #     state_name="reward_on3",
-        #     # Screen will freeze for the solenoid open time, probably fine but keep an
-        #     # eye if you need to open it for a long time
-        #     state_timer=self.task_params.SOLENOID_OPEN_TIME,
-        #     output_actions=[
-        #         ("Valve1", solenoid_pin),
-        #         ("GlobalTimerTrig", 2),
-        #     ],  # To FPGA
-        #     state_change_conditions={"Tup": "reward_off3"},
-        # )
+        sma.add_state(
+            state_name="reward_on1",
+            # Screen will freeze for the solenoid open time, probably fine but keep an
+            # eye if you need to open it for a long time
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", solenoid_pin),
+                ("GlobalTimerTrig", 2),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off1"},
+        )
 
         sma.add_state(
-            state_name="no_reward",
+            state_name="reward_off1",
+            # Needs a short time to turn the solenoid off.
+            # JB: This timer is critical. Basically, it is the time in between two water drops.
+            state_timer=self.task_params.INTER_REWARD_INTERVAL,
+            output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "reward_on2"},
+        )
+
+        sma.add_state(
+            state_name="reward_on2",
+            # Screen will freeze for the solenoid open time, probably fine but keep an
+            # eye if you need to open it for a long time
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", solenoid_pin),
+                ("GlobalTimerTrig", 2),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off2"},
+        )
+
+        sma.add_state(
+            state_name="reward_off2",
             # Needs a short time to turn the solenoid off.
             state_timer=0.001,
-            # output_actions=[("Valve1", 0)],
+            output_actions=[("Valve1", 0)],
+            state_change_conditions={"Tup": "reward_on3"},
+        )
+
+        sma.add_state(
+            state_name="reward_on3",
+            # Screen will freeze for the solenoid open time, probably fine but keep an
+            # eye if you need to open it for a long time
+            state_timer=self.task_params.SOLENOID_OPEN_TIME,
+            output_actions=[
+                ("Valve1", solenoid_pin),
+                ("GlobalTimerTrig", 2),
+            ],  # To FPGA
+            state_change_conditions={"Tup": "reward_off3"},
+        )
+
+        sma.add_state(
+            state_name="reward_off3",
+            # Needs a short time to turn the solenoid off.
+            state_timer=0.001,
+            output_actions=[("Valve1", 0)],
             state_change_conditions={"Tup": "transition_post_reward"},
         )
 
