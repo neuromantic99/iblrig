@@ -15,6 +15,7 @@ from iblutil.util import setup_logger
 from pybpodapi.protocol import StateMachine
 
 from iblrig.hardware import SOFTCODE
+from iblutil.spacer import Spacer
 
 
 import yaml
@@ -99,6 +100,11 @@ class Session(IblBase):
     def get_state_machine_trial(self, i):
         solenoid_pin = 0
         sma = StateMachine(self.bpod)
+
+        Spacer(n_pulses=random.choice([1, 2, 3, 4, 5]), tup=0.01).add_spacer_states(
+            sma, "trial_start"
+        )
+
         sma.set_global_timer(1, self.task_params.MAX_TRIAL_TIME)
         sma.set_global_timer(2, self.task_params.REWARD_ZONE_TIME)
 

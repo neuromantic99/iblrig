@@ -1,6 +1,6 @@
 ################## COMMON ACROSS ALL DAYS  #############################
-"SOLENOID_OPEN_TIME": 0.015
-
+"SOLENOID_OPEN_TIME": 0.02
+# "SOLENOID_OPEN_TIME": 0.1
 ################## Habituations #############################
 # "TASK_NAME": "Habituation 2"
 # "SESSION_LENGTH": 20 # Minutes
@@ -17,13 +17,13 @@
 
 # ################## TASK #############################
 "TASK_NAME": "Main task"
-"NTRIALS": 100
-"MAX_TRIAL_TIME": 180 # Seconds
-"ITI_LENGTH": 3
+"NTRIALS": 150
+"MAX_TRIAL_TIME": 300 # Seconds
+"ITI_LENGTH": 20
 "REWARD_ZONE_TIME": 1.5
 "SCREEN_REFRESH_RATE": 30 # Hz
 "SESSION_LENGTH": 60 # Minutes
-"INTER_REWARD_INTERVAL": 0.1  # Seconds
+"INTER_REWARD_INTERVAL": 0.2  # Seconds
 
 ################## SOLENOID OPTIMISATION ###################
 # "SOLENOID_OPEN_TIME": 0.02
