@@ -107,6 +107,7 @@ class Session(IblBase):
 
         sma.set_global_timer(1, self.task_params.MAX_TRIAL_TIME)
         sma.set_global_timer(2, self.task_params.REWARD_ZONE_TIME)
+        sma.set_global_timer(3, self.task_params.ITI_LENGTH)
 
         sma.add_state(
             state_name="trial_start",
@@ -237,13 +238,26 @@ class Session(IblBase):
             state_name="trigger_ITI",
             state_timer=0,
             output_actions=[("SoftCode", SOFTCODE.ITI)],
-            state_change_conditions={"Tup": "ITI"},
+            state_change_conditions={"Tup": "ITI_transition"},
         )
 
         sma.add_state(
-            state_name="ITI",
-            state_timer=self.task_params.ITI_LENGTH,
-            state_change_conditions={"Tup": "exit"},
+            state_name="ITI_transition",
+            state_timer=1 / self.task_params.SCREEN_REFRESH_RATE,
+            state_change_conditions={
+                "Tup": "trigger_panda_ITI",
+                "GlobalTimer3_End": "exit",
+            },
+        )
+
+        sma.add_state(
+            state_name="trigger_panda_ITI",
+            state_timer=0,
+            state_change_conditions={
+                "Tup": "ITI_transition",
+                "GlobalTimer3_End": "exit",
+            },
+            output_actions=[("SoftCode", SOFTCODE.TRIGGER_PANDA)],
         )
 
         return sma
