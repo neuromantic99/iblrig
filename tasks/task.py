@@ -234,7 +234,10 @@ class Session(IblBase):
         sma.add_state(
             state_name="trigger_ITI",
             state_timer=0,
-            output_actions=[("SoftCode", SOFTCODE.ITI)],
+            output_actions=[
+                ("SoftCode", SOFTCODE.ITI),
+                ("GlobalTimerTrig", 3),
+            ],
             state_change_conditions={"Tup": "ITI_transition"},
         )
 
