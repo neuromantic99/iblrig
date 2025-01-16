@@ -12,7 +12,7 @@ from serial_singleton import SerialSingleton, filter_ports
 from iblrig.path_helper import load_settings_yaml
 from iblutil.util import setup_logger
 
-log = setup_logger("iblrig", level="DEBUG")
+log = setup_logger("iblrig", level="INFO")
 
 
 @dataclass
@@ -44,8 +44,7 @@ class ValidateHardware(ABC):
         )
 
     @abstractmethod
-    def _run(self):
-        ...
+    def _run(self): ...
 
     def run(self, *args, **kwargs):
         self.process(result := self._run(*args, **kwargs))
@@ -82,8 +81,7 @@ class ValidateHardwareDevice(ValidateHardware):
     device_name: str
 
     @abstractmethod
-    def _run(self):
-        ...
+    def _run(self): ...
 
     def __init__(self, *args, **kwargs):
         if self.log_results:
