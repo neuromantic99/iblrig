@@ -3,6 +3,10 @@
 # The local_data_path is the path on the computer where the Subject folder containing the raw data will be saved.
 # This folder can be anywhere on a writable drive, preferably not on a removable USB drive.
 # If this folder does not exist, it will be created automatically upon running the first session ever.
+<<<<<<< Updated upstream
+=======
+# iblrig_local_data_path: /home/buschelab/Documents/behaviour_data
+>>>>>>> Stashed changes
 iblrig_local_data_path: /home/james/Data/Behaviour
 # The remote_data_path is the optional location of a remote computer acting as a server to gather
 # all the data in case several data streams are acquired on different PCs.
@@ -10,9 +14,14 @@ iblrig_local_data_path: /home/james/Data/Behaviour
 # In the IBL case, the server will look like an external drive mount point, e.g. Y:\
 # If null, you will be prompted for a valid remote server path in which to save the experiment description.
 # If not needed, set to False.
+<<<<<<< Updated upstream
 # iblrig_remote_data_path: /home/james/mnt/James/Behaviour/online
 iblrig_remote_data_path: /home/james/mnt/Josef/Behaviour/online
 
+=======
+# iblrig_remote_data_path: /mnt/Josef/Behaviour/online/Subjects # Y:\ for IBL, null: will prompt at session start, false: no transfer
+iblrig_remote_data_path: /home/james/mnt/Josef/Behaviour/online
+>>>>>>> Stashed changes
 ALYX_LAB: buschelab # required
 ALYX_USER: null # your Alyx username - can be set as null if there is no Alyx database
 ALYX_URL: null # https://alyx.internationalbrainlab.org - can be set as null if there is no Alyx database
