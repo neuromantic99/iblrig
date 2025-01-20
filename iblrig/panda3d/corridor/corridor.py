@@ -84,12 +84,21 @@ class Corridor(ShowBase):
         self.camera_left.setHpr(90, 0, 0)
         self.camera_right.setHpr(-90, 0, 0)
 
-        self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
+        # self.taskMgr.add(self.moveCameraTask, "MoveCameraTask")
 
         # Keep track of corridor nodes so we can remove them later
         self.corridor_nodes: List[Any] = []
 
+        self.texture_cache = {}
+
+        for texture in ["horGrat.jpg", "black.png", "pebble.jpg","blackAndWhiteCircles.png", "floor.jpg", "endOfCorridor.png"]:
+            self.texture_cache[texture] = self.loader.load_texture(
+                f"iblrig/panda3d/corridor/textures/{texture}"
+            )
+            
+
     def start_trial(self, wall_texture: str) -> None:
+        
         # If you want multiple textures in the same corridor
         # self.build_corridor(0, "blueTriangles.jpg", False)
         self.clear_corridor()  # Clear existing corridor before building a new one
@@ -220,10 +229,7 @@ class Corridor(ShowBase):
         ceiling.setP(-90)
 
         for model in [left_wall, right_wall, floor, ceiling]:
-            texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{texture_name}"
-            )
-
+            texture = self.texture_cache[texture_name]
             model.setTexture(texture, 1)
             model.setTwoSided(True)
             model.reparentTo(self.render)
@@ -296,9 +302,7 @@ class Corridor(ShowBase):
                 if model_name in ["floor", "ceiling"]
                 else back_wall_texture if model_name == "back_wall" else wall_texture
             )
-            texture = self.loader.load_texture(
-                f"iblrig/panda3d/corridor/textures/{texture_name}"
-            )
+            texture = self.texture_cache[texture_name]
 
             model.setTexture(texture, 1)
             model.setTwoSided(True)

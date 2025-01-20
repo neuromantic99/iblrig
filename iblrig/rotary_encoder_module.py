@@ -1,8 +1,50 @@
+import numpy as np
 from pybpodapi.com.arcom import ArCOM, ArduinoTypes
 
 
 
 hardware_version: int
+
+class SignalUnwrapper:
+    def __init__(self, modulo=3600):
+        self.modulo = modulo
+        self.unwrapped_signal = []
+        self.offset = 0
+        self.previous_value = None
+
+    def unwrap_point(self, value):
+        """
+        Unwrap a single point based on the previous value and current offset.
+
+        Args:
+            value: New data point to unwrap
+
+        Returns:
+            Unwrapped value
+        """
+        if self.previous_value is None:
+            self.previous_value = value
+            unwrapped_value = value
+        else:
+            # Calculate the difference between current and previous value
+            diff = value - self.previous_value
+
+            # If the difference is greater than half the modulo, we've wrapped down
+            if diff < -self.modulo / 2:
+                self.offset += self.modulo
+            # If the difference is less than negative half the modulo, we've wrapped up
+            elif diff > self.modulo / 2:
+                self.offset -= self.modulo
+
+            unwrapped_value = value + self.offset
+            self.previous_value = value
+
+        self.unwrapped_signal.append(unwrapped_value)
+        return unwrapped_value
+
+    def get_unwrapped_signal(self):
+        """Return the complete unwrapped signal."""
+        return np.array(self.unwrapped_signal)
 
 
 class RotaryEncoderModule(object):
@@ -32,6 +74,10 @@ class RotaryEncoderModule(object):
         if serialport:
             self.open(serialport)
         self.hardware_version = hardware_version
+        self.init_unwrapper()
+
+    def init_unwrapper(self):
+        self.unwrapper = SignalUnwrapper()
 
     def open(self, serialport):
         """
@@ -148,8 +194,10 @@ class RotaryEncoderModule(object):
         self.arcom.write_array([self.COM_GETCURRENTPOS])
         data_in_bytes = b"".join(self.arcom.read_bytes_array(2))
         ticks = int.from_bytes(data_in_bytes, byteorder="little", signed=True)
-        return self.__pos_2_degrees(ticks)
-
+        pos = self.__pos_2_degrees(ticks)
+        pos = self.unwrapper.unwrap_point(pos)
+        print(pos)
+        return pos
     def set_zero_position(self):
         """
         Sets current rotary encoder position to zero.

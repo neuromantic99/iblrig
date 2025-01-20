@@ -160,7 +160,7 @@ class Session(IblBase):
             # eye if you need to open it for a long time
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", solenoid_pin),
+                ("Valve2", solenoid_pin),
                 ("GlobalTimerTrig", 2),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off1"},
@@ -171,7 +171,7 @@ class Session(IblBase):
             # Needs a short time to turn the solenoid off.
             # JB: This timer is critical. Basically, it is the time in between two water drops.
             state_timer=self.task_params.INTER_REWARD_INTERVAL,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "reward_on2"},
         )
 
@@ -181,7 +181,7 @@ class Session(IblBase):
             # eye if you need to open it for a long time
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", solenoid_pin),
+                ("Valve2", solenoid_pin),
                 ("GlobalTimerTrig", 2),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off2"},
@@ -191,7 +191,7 @@ class Session(IblBase):
             state_name="reward_off2",
             # Needs a short time to turn the solenoid off.
             state_timer=0.001,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "reward_on3"},
         )
 
@@ -201,7 +201,7 @@ class Session(IblBase):
             # eye if you need to open it for a long time
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", solenoid_pin),
+                ("Valve2", solenoid_pin),
                 ("GlobalTimerTrig", 2),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off3"},
@@ -211,7 +211,7 @@ class Session(IblBase):
             state_name="reward_off3",
             # Needs a short time to turn the solenoid off.
             state_timer=0.001,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "transition_post_reward"},
         )
 

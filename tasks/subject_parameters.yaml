@@ -31,68 +31,34 @@
 # # rewarded_texture: "pebble.jpg"
 # subject_id: "JB020"
 # rewarded_texture: "pebble.jpg"
-# subject_id: "JB021" 
+# subject_id: "J021"
 # rewarded_texture: "blackAndWhiteCircles.png"
 # subject_id: "JB019"
 # rewarded_texture: "blackAndWhiteCircles.png"
 
-# subject_id: "J014"  
+# subject_id: "J014"
 # rewarded_texture: "blackAndWhiteCircles.png"
 
 # subject_id: "TEST"
 # rewarded_texture: "blackAndWhiteCircles.png"
-
-subject_id: "JB011"
-rewarded_texture: "blackAndWhiteCircles.png"
+# subject_id: "JB011"
+# # # rewarded_texture: "blackAndWhiteCircles.png"
 # rewarded_texture: "pebble.jpg"                # REVERSAL
 
-# subject_id: "JB012"
+subject_id: "JB012"
 # rewarded_texture: "blackAndWhiteCircles.png"
+rewarded_texture: "pebble.jpg" # REVERSAL
+
 # subject_id: "JB013"
-# rewarded_texture: "blackAndWhiteCircles.png"
+# # rewarded_texture: "blackAndWhiteCircles.png"
+# rewarded_texture: "pebble.jpg" # REVERSAL
 
 # subject_id: "JB014"
 # # # rewarded_texture: "blackAndWhiteCircles.png"
 # rewarded_texture: "pebble.jpg"                  # REVERSAL LEARNING
 
 # subject_id: "JB015"
-# # rewarded_texture: "pebble.jpg"
-# rewarded_texture: "blackAndWhiteCircles.png"      # REVERSAL
+# rewarded_texture: "pebble.jpg"
 
 # subject_id: "JB016"
-# # rewarded_texture: "pebble.jpg"
-# rewarded_texture: "blackAndWhiteCircles.png"      # REVERSAL
-
-# subject_id: "JB018"
-# # rewarded_texture: "pebble.jpg"
-# rewarded_texture: "blackAndWhiteCircles.png"      # REVERSAL
-
-
-# subject_id: "JB019"
-# # rewarded_texture: "pebble.jpg"
-# rewarded_texture: "blackAndWhiteCircles.png"      # REVERSAL
-
-# subject_id: "JB020"
-# # rewarded_texture: "blackAndWhiteCircles.png" 
-# rewarded_texture: "pebble.jpg"                  # REVERSAL
-
-# subject_id: "JB021"
-# # rewarded_texture: "blackAndWhiteCircles.png" 
-# rewarded_texture: "pebble.jpg"                  # REVERSAL
-
-# subject_id: "JB022"
-# # rewarded_texture: "blackAndWhiteCircles.png"
-# rewarded_texture: "pebble.jpg"                  # REVERSAL
-
-# subject_id: "JB023"
-# #  rewarded_texture: "pebble.jpg"
-# rewarded_texture: "blackAndWhiteCircles.png" # REVERSAL
-
-# subject_id: "JB026"
-# # rewarded_texture: "blackAndWhiteCircles.png"
-# rewarded_texture: "pebble.jpg"  # REVERSAL
-
-# subject_id: "JB027"
-# rewarded_texture: "blackAndWhiteCircles.png"   # REVERSAL
-# # rewarded_texture: "pebble.jpg"
-
+# rewarded_texture: "pebble.jpg"

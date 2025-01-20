@@ -294,6 +294,7 @@ class MyRotaryEncoder:
         # I don't know if both of these are necessary
         self.rotary_encoder.set_position(0)
         self.rotary_encoder.set_zero_position()
+        self.rotary_encoder.init_unwrapper()
 
     def get_angle(self) -> float | None:
         return self.rotary_encoder.current_position() if self.connected else None

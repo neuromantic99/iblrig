@@ -586,12 +586,14 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
+               
                 self.rotary_encoder_position.append(position)
                 self.corridor.set_camera_position(position)
                 self.corridor.step()
             elif code == SOFTCODE.STORE_ENCODER_POSITION:
                 # It would be better to do this with an output stream
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
+                # print(f"Position {position}")
                 self.rotary_encoder_position.append(position)
             elif code == SOFTCODE.ITI:
                 self.corridor.ITI()
@@ -733,7 +735,7 @@ class ValveMixin:
         sma.add_state(
             state_name="valve_open",
             state_timer=reward_valve_time,
-            output_actions=[("Valve1", 255), ("BNC1", 255)],  # To FPGA
+            output_actions=[("Valve2", 255), ("BNC1", 255)],  # To FPGA
             state_change_conditions={"Tup": "exit"},
         )
         self.bpod.send_state_machine(sma)
