@@ -733,7 +733,7 @@ class ValveMixin:
         sma.add_state(
             state_name="valve_open",
             state_timer=reward_valve_time,
-            output_actions=[("Valve1", 255), ("BNC1", 255)],  # To FPGA
+            output_actions=[("Valve2", 255), ("BNC1", 255)],  # To FPGA
             state_change_conditions={"Tup": "exit"},
         )
         self.bpod.send_state_machine(sma)

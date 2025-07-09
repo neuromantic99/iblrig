@@ -71,7 +71,7 @@ class Session(IblBase):
             state_name="open",
             state_timer=self.task_params.SOLENOID_OPEN_TIME * 10,
             output_actions=[
-                ("Valve1", 255),  # 255 is the voltage that you send to the solenoid
+                ("Valve2", 255),  # 255 is the voltage that you send to the solenoid
             ],
             state_change_conditions={
                 "Tup": "close",
@@ -83,7 +83,7 @@ class Session(IblBase):
             state_timer=0.01,
             state_change_conditions={"Tup": "exit"},
             output_actions=[
-                ("Valve1", 0),  # set solenoid voltage to 0
+                ("Valve2", 0),  # set solenoid voltage to 0
             ],
         )
         return sma

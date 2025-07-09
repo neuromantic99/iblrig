@@ -15,6 +15,7 @@ iblrig_local_data_path: /home/buschelab/Documents/behaviour_data
 # iblrig_remote_data_path: /mnt/MarcBusche/James/Behaviour/online
 # iblrig_remote_data_path: /mnt/James/Behaviour/online
 iblrig_remote_data_path: /mnt/smbshare/Josef/Behaviour/online
+# iblrig_remote_data_path: /home/buschelab/Documents/
 
 
 

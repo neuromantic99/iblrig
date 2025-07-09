@@ -99,7 +99,7 @@ class Session(IblBase):
             state_name="reward_on1",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", 255),
+                ("Valve2", 255),
                 ("GlobalTimerTrig", 2),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off1"},
@@ -109,7 +109,7 @@ class Session(IblBase):
             state_name="reward_off1",
             # Short timer to actually send voltage to solenoid
             state_timer=reward_off_timer,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "reward_on2"},
         )
 
@@ -117,7 +117,7 @@ class Session(IblBase):
             state_name="reward_on2",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", 255),
+                ("Valve2", 255),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off2"},
         )
@@ -126,7 +126,7 @@ class Session(IblBase):
             state_name="reward_off2",
             # Short timer to actually send voltage to solenoid
             state_timer=reward_off_timer,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "reward_on3"},
         )
 
@@ -134,7 +134,7 @@ class Session(IblBase):
             state_name="reward_on3",
             state_timer=self.task_params.SOLENOID_OPEN_TIME,
             output_actions=[
-                ("Valve1", 255),
+                ("Valve2", 255),
             ],  # To FPGA
             state_change_conditions={"Tup": "reward_off3"},
         )
@@ -143,7 +143,7 @@ class Session(IblBase):
             state_name="reward_off3",
             # Short timer to actually send voltage to solenoid
             state_timer=reward_off_timer,
-            output_actions=[("Valve1", 0)],
+            output_actions=[("Valve2", 0)],
             state_change_conditions={"Tup": "transition"},
         )
 

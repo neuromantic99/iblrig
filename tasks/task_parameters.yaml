@@ -15,7 +15,7 @@
 # "SESSION_LENGTH": 60 # Minutes
 # "NTRIALS": 1000
 
-# ################## TASK #############################
+################## TASK #############################
 "TASK_NAME": "Main task"
 "NTRIALS": 150
 "MAX_TRIAL_TIME": 300 # Seconds
@@ -34,6 +34,7 @@
 # "REWARD_ZONE_TIME": 1.5
 # "SCREEN_REFRESH_RATE": 30 # Hz
 # "ITI_LENGTH": 3
+
 
 ############### FEAR CONDITIONING ######################
 # "TASK_NAME": "Fear conditioning"
