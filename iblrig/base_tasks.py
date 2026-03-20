@@ -586,12 +586,14 @@ class BpodMixin:
                 self.trigger_bonsai_cameras()
             elif code == SOFTCODE.TRIGGER_PANDA:
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
+                # print(f"pos {position}")
                 self.rotary_encoder_position.append(position)
                 self.corridor.set_camera_position(position)
                 self.corridor.step()
             elif code == SOFTCODE.STORE_ENCODER_POSITION:
                 # It would be better to do this with an output stream
                 position = self.device_rotary_encoder.rotary_encoder.current_position()
+                # print(f"pos; {position}")
                 self.rotary_encoder_position.append(position)
             elif code == SOFTCODE.ITI:
                 self.corridor.ITI()
