@@ -29,7 +29,7 @@ from iblrig.hardware import SOFTCODE
 log = setup_logger("iblrig")
 
 # Longer than 10 mins so it encompasses the whole thing
-LENGTH = 11  # mins
+LENGTH = 20  # mins
 
 HERE = Path(__file__).parent.resolve()
 
