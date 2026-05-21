@@ -138,8 +138,8 @@
 # rewarded_texture: "blackAndWhiteCircles.png"  # REVERSAL
 
 # subject_id: "J031"
-# rewarded_texture: "blackAndWhiteCircles.png"
-# # rewarded_texture: "pebble.jpg"  # REVERSAL
+# # rewarded_texture: "blackAndWhiteCircles.png"
+# rewarded_texture: "pebble.jpg"  # REVERSAL
 
 subject_id: "J032"
 # rewarded_texture: "pebble.jpg"
