@@ -149,15 +149,29 @@
 # rewarded_texture: "blackAndWhiteCircles.png"
 # # rewarded_texture: "pebble.jpg"  # REVERSAL
 
-subject_id: "J034"
-# rewarded_texture: "pebble.jpg"
-rewarded_texture: "blackAndWhiteCircles.png"  # REVERSAL
+# subject_id: "J034"
+# # rewarded_texture: "pebble.jpg"
+# rewarded_texture: "blackAndWhiteCircles.png"  # REVERSAL
 
 # subject_id: "J035"
 # # rewarded_texture: "blackAndWhiteCircles.png"
 # rewarded_texture: "pebble.jpg"  # REVERSAL
 
 
+# subject_id: "J036"
+# rewarded_texture: "pebble.jpg"
+# # rewarded_texture: "blackAndWhiteCircles.png"  # REVERSAL
+
+# subject_id: "J037"
+# rewarded_texture: "blackAndWhiteCircles.png"
+# # rewarded_texture: "pebble.jpg"  # REVERSAL
+
+subject_id: "J038"
+rewarded_texture: "pebble.jpg"
+# rewarded_texture: "blackAndWhiteCircles.png"  # REVERSAL
+
+
 # subject_id: "test"
 # rewarded_texture: "blackAndWhiteCircles.png"
 # # # rewarded_texture: "pebble.jpg"  # REVERSAL
+
